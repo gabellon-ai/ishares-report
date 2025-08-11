@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   refresh:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repo
@@ -30,27 +30,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium webdriver-manager pandas requests lxml beautifulsoup4
 
-      # ⬇️ Pick the script that writes ./public/funds.json inside THIS repo
-      # If your in-repo script is `ishares_fixed_income_scraper.py`, keep this:
+      - name: Ensure repo output folders exist
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path public | Out-Null
+          New-Item -ItemType Directory -Force -Path metrics | Out-Null
+
+      # ⬇️ Run the scraper that writes ./public/funds.json inside THIS repo
       - name: Run scraper
+        shell: pwsh
         run: |
           python ishares_fixed_income_scraper.py
-          test -f public/funds.json
-
-      # If instead your in-repo script is `blake.py`, use this step instead:
-      # - name: Run scraper
-      #   run: |
-      #     python blake.py
-      #     test -f public/funds.json
+          if (-not (Test-Path public\funds.json)) { throw "public\funds.json not found" }
 
       - name: Commit & push if changed
+        shell: pwsh
         run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add public/funds.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public\funds.json
+          if (-not (git diff --cached --quiet)) {
             git commit -m "chore: nightly data refresh"
             git push
-          else
+          } else {
             echo "No changes detected"
-          fi
+          }
