@@ -2,13 +2,14 @@ name: Update funds.json nightly
 
 on:
   schedule:
-    - cron: "30 12 * * *"      # 7:30 AM America/Chicago
-  workflow_dispatch: {}
+    - cron: "30 12 * * *"   # 7:30 AM America/Chicago (CDT)
+  workflow_dispatch: {}      # manual "Run workflow" button
   push:
     paths:
       - ".github/workflows/update-funds.yml"
       - "ishares_fixed_income_scraper.py"
       - "batch_export_json.py"
+      - "requirements.txt"
 
 permissions:
   contents: write
@@ -16,6 +17,12 @@ permissions:
 jobs:
   refresh:
     runs-on: windows-latest
+
+    env:
+      # Keep logs quieter and make output paths explicit
+      OUTPUT_DIR: ${{ github.workspace }}/data
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      WDM_LOG_LEVEL: "0"
 
     steps:
       - name: Checkout repo
@@ -32,67 +39,77 @@ jobs:
       - name: Install Python deps
         run: |
           python -m pip install --upgrade pip
-          pip install selenium webdriver-manager pandas requests lxml beautifulsoup4
+          if (Test-Path .\requirements.txt) {
+            pip install -r requirements.txt
+          } else {
+            pip install selenium webdriver-manager pandas requests lxml beautifulsoup4
+          }
 
-      - name: Ensure public/ exists
+      - name: Ensure folders exist (data/ and public/)
         shell: pwsh
-        run: New-Item -ItemType Directory -Force -Path public | Out-Null
+        run: |
+          New-Item -ItemType Directory -Force -Path data   | Out-Null
+          New-Item -ItemType Directory -Force -Path public | Out-Null
 
-      # 1) Run the scraper to create ishares_fixed_income_metrics_*.csv
-      - name: Run scraper (writes CSVs)
-        shell: pwsh
+      - name: Run scraper (writes CSVs into data/)
         run: python .\ishares_fixed_income_scraper.py
 
-      # 2) If your script saved CSVs outside the repo (e.g., C:\home\...), copy them back
-      - name: Locate metrics CSVs and copy to workspace if needed
+      - name: Verify metrics CSV present
         shell: pwsh
         run: |
-          $found = $false
-          $ws = $env:GITHUB_WORKSPACE
-          # search where they’re likely to land
-          foreach ($root in @($ws, 'C:\home', 'D:\a')) {
-            if (Test-Path $root) {
-              Get-ChildItem -Path $root -Recurse -Filter 'ishares_fixed_income_metrics_*.csv' -ErrorAction SilentlyContinue |
-                ForEach-Object {
-                  Write-Host "Found: $($_.FullName)"
-                  if ($_.DirectoryName -ne $ws) {
-                    Copy-Item $_.FullName $ws -Force
-                    Write-Host "Copied to workspace: $ws"
-                  }
-                  $found = $true
-                }
-            }
-          }
-          if (-not $found) {
-            Write-Error "No metrics CSV found after scraping."
+          $latest = Get-ChildItem -Path data -Filter 'ishares_fixed_income_metrics_*.csv' |
+                    Sort-Object LastWriteTime -Descending |
+                    Select-Object -First 1
+          if (-not $latest) {
+            Write-Error "No metrics CSV found in data/. Did the scraper run successfully?"
             exit 1
           }
-          Write-Host "Metrics present in workspace:"
-          Get-ChildItem -Path $ws -Filter 'ishares_fixed_income_metrics_*.csv'
+          "Using CSV: $($latest.FullName)"
 
-      # 3) Convert the latest CSV to public/funds.json (ALL rows)
-      - name: Export to funds.json
+      - name: Export to public/funds.json
         run: python .\batch_export_json.py
 
-      - name: Show result size
+      - name: Check funds.json exists
         shell: pwsh
         run: |
-          Write-Host "funds.json size: " (Get-Item .\public\funds.json).Length "bytes"
-          Get-Content .\public\funds.json -TotalCount 5
+          if (-not (Test-Path .\public\funds.json)) {
+            Write-Error "public\funds.json not found after export."
+            exit 1
+          }
+          Get-Item .\public\funds.json | Format-List *
 
-      - name: Commit & push if changed (rebase-safe)
+      - name: Commit & push if changed
         shell: pwsh
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Make sure we are up to date, then stage & commit just funds.json
+          git fetch origin
+          git checkout $env:GITHUB_REF_NAME
+          git pull --rebase
+
           git add .\public\funds.json
-          if (-not (git diff --cached --quiet)) {
-            git commit -m "chore: refresh funds.json"
-            for ($i=1; $i -le 3; $i++) {
-              git pull --rebase origin $env:GITHUB_REF_NAME || exit 1
-              git push && exit 0
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "No changes in public/funds.json"
+            exit 0
+          }
+
+          $stamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss zzz"
+          git commit -m "chore: refresh funds.json ($stamp)"
+
+          $max = 3
+          for ($i=1; $i -le $max; $i++) {
+            try {
+              git push
+              Write-Host "Push succeeded"
+              break
+            } catch {
+              Write-Host "Push failed (attempt $i/$max). Rebasing and retrying…"
+              git pull --rebase
+              if ($i -eq $max) {
+                throw "Failed to push after $max attempts"
+              }
             }
-            throw "Failed to push after 3 attempts"
-          } else {
-            echo "No changes to commit"
           }
