@@ -2,9 +2,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* (optional but nice if you use shadcn tokens) */
-@layer base {
-  :root { --radius: 0.5rem; }
-  .dark {}
-}
