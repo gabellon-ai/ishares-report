@@ -1,1 +1,4 @@
-module.exports = { plugins: [] }   // disable Tailwind for this safe-boot
+// postcss.config.js (ESM)
+export default {
+  plugins: []
+};
