@@ -1,3 +1,10 @@
-:root { color-scheme: light dark; }
-html, body, #root { height: 100%; }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* (optional but nice if you use shadcn tokens) */
+@layer base {
+  :root { --radius: 0.5rem; }
+  .dark {}
+}
