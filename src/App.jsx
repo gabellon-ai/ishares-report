@@ -1,3 +1,7 @@
+// App.tsx
+// Drop this in src/App.tsx (Vercel + Vite). It renders your full dashboard
+// and loads data from /funds.json that your GitHub Action writes to /public.
+
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,7 +34,7 @@ type Fund = {
   "Effective Duration"?: number; // yrs
   "Weighted Avg Maturity"?: number; // yrs
   "Option Adjusted Spread"?: number; // bps
-  Detail?: string;
+  Detail?: string; // mapped from "Detail URL"
 };
 
 type SortKey =
@@ -68,11 +72,17 @@ const fmtUsd = (n?: number) => (n === undefined ? "—" : `$${n.toFixed(2)}`);
 /* ======================== Theme utilities ===================== */
 
 function useIsDark() {
-  const get = () => document.documentElement.classList.contains("dark");
+  const get = () =>
+    typeof document !== "undefined" &&
+    document.documentElement.classList.contains("dark");
   const [isDark, setIsDark] = useState(get);
   useEffect(() => {
+    if (typeof document === "undefined") return;
     const obs = new MutationObserver(() => setIsDark(get()));
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
     return () => obs.disconnect();
   }, []);
   return isDark;
@@ -81,6 +91,7 @@ function useIsDark() {
 function ThemeToggle() {
   const isDark = useIsDark();
   const toggle = () => {
+    if (typeof document === "undefined") return;
     const el = document.documentElement;
     if (isDark) {
       el.classList.remove("dark");
@@ -150,12 +161,23 @@ function NumberStepper({
     <div className="space-y-1">
       <Label className="flex items-center justify-between">
         <span>{label}</span>
-        <button type="button" onClick={clear} disabled={disabled} className="text-xs text-slate-500 hover:underline">
+        <button
+          type="button"
+          onClick={clear}
+          disabled={disabled}
+          className="text-xs text-slate-500 hover:underline"
+        >
           clear
         </button>
       </Label>
       <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" className="h-9 w-9" onClick={() => change(-step)} disabled={disabled}>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-9 w-9"
+          onClick={() => change(-step)}
+          disabled={disabled}
+        >
           –
         </Button>
         <Input
@@ -169,10 +191,18 @@ function NumberStepper({
           className="text-center"
           disabled={disabled}
         />
-        <Button type="button" variant="outline" className="h-9 w-9" onClick={() => change(step)} disabled={disabled}>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-9 w-9"
+          onClick={() => change(step)}
+          disabled={disabled}
+        >
           +
         </Button>
-        {suffix ? <span className="text-slate-500 text-sm">{suffix}</span> : null}
+        {suffix ? (
+          <span className="text-slate-500 text-sm">{suffix}</span>
+        ) : null}
       </div>
     </div>
   );
@@ -180,7 +210,7 @@ function NumberStepper({
 
 /* ============================== App =========================== */
 
-const FinancialApp: React.FC = () => {
+const App: React.FC = () => {
   // Data
   const [funds, setFunds] = useState<Fund[]>([]);
   const [loading, setLoading] = useState(true);
@@ -196,7 +226,8 @@ const FinancialApp: React.FC = () => {
   const [oasMax, setOasMax] = useState<number | undefined>();
 
   // Sorting
-  const [sortKey, setSortKey] = useState<SortKey>("Average Yield to Maturity");
+  const [sortKey, setSortKey] =
+    useState<SortKey>("Average Yield to Maturity");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   // Charts
@@ -215,23 +246,34 @@ const FinancialApp: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        let res = await fetch("./funds.json", { cache: "no-store" });
-        if (!res.ok) res = await fetch("/funds.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        // Build a robust URL that works on Vercel and locally
+        const jsonUrl =
+          new URL("funds.json", import.meta.env.BASE_URL).toString() +
+          `?ts=${Date.now()}`;
+
+        const res = await fetch(jsonUrl, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${res.url}`);
         const json = await res.json();
+
         const parsed: Fund[] = (json || []).map((r: any) => ({
           Ticker: r["Ticker"],
           "Fund Name": r["Fund Name"],
           "Closing Price": parseNum(r["Closing Price"]),
-          "Average Yield to Maturity": parseNum(r["Average Yield to Maturity"]),
+          "Average Yield to Maturity": parseNum(
+            r["Average Yield to Maturity"]
+          ),
           "Weighted Avg Coupon": parseNum(r["Weighted Avg Coupon"]),
           "Effective Duration": parseNum(r["Effective Duration"]),
           "Weighted Avg Maturity": parseNum(r["Weighted Avg Maturity"]),
           "Option Adjusted Spread": parseNum(r["Option Adjusted Spread"]),
-          Detail: r["Detail"],
+          // Map Detail URL -> Detail so the "View" link renders
+          Detail: r["Detail URL"] ?? r["Detail"],
         }));
+
         setFunds(parsed);
       } catch (e: any) {
+        console.error(e);
         setError(e?.message || "Failed to load funds.json");
       } finally {
         setLoading(false);
@@ -241,24 +283,41 @@ const FinancialApp: React.FC = () => {
 
   /* --------------------- Bounds & defaults --------------------- */
   const ytmVals = useMemo(
-    () => funds.map((f) => f["Average Yield to Maturity"]).filter((n): n is number => typeof n === "number"),
+    () =>
+      funds
+        .map((f) => f["Average Yield to Maturity"])
+        .filter((n): n is number => typeof n === "number"),
     [funds]
   );
   const durVals = useMemo(
-    () => funds.map((f) => f["Effective Duration"]).filter((n): n is number => typeof n === "number"),
+    () =>
+      funds
+        .map((f) => f["Effective Duration"])
+        .filter((n): n is number => typeof n === "number"),
     [funds]
   );
   const oasVals = useMemo(
-    () => funds.map((f) => f["Option Adjusted Spread"]).filter((n): n is number => typeof n === "number"),
+    () =>
+      funds
+        .map((f) => f["Option Adjusted Spread"])
+        .filter((n): n is number => typeof n === "number"),
     [funds]
   );
 
-  const ytmMinBound = ytmVals.length ? Math.floor(Math.min(...ytmVals) * 4) / 4 : 0; // round .25
-  const ytmMaxBound = ytmVals.length ? Math.ceil(Math.max(...ytmVals) * 4) / 4 : 10;
+  const ytmMinBound = ytmVals.length
+    ? Math.floor(Math.min(...ytmVals) * 4) / 4
+    : 0; // round .25
+  const ytmMaxBound = ytmVals.length
+    ? Math.ceil(Math.max(...ytmVals) * 4) / 4
+    : 10;
   const durMinBound = durVals.length ? Math.floor(Math.min(...durVals)) : 0;
   const durMaxBound = durVals.length ? Math.ceil(Math.max(...durVals)) : 30;
-  const oasMinBound = oasVals.length ? Math.floor(Math.min(...oasVals) / 5) * 5 : 0; // nearest 5
-  const oasMaxBound = oasVals.length ? Math.ceil(Math.max(...oasVals) / 5) * 5 : 500;
+  const oasMinBound = oasVals.length
+    ? Math.floor(Math.min(...oasVals) / 5) * 5
+    : 0; // nearest 5
+  const oasMaxBound = oasVals.length
+    ? Math.ceil(Math.max(...oasVals) / 5) * 5
+    : 500;
 
   // Set defaults once data is available
   useEffect(() => {
@@ -267,28 +326,53 @@ const FinancialApp: React.FC = () => {
     if (ytmMax === undefined) setYtmMax(ytmMaxBound);
     if (durMin === undefined) setDurMin(durMinBound);
     if (durMax === undefined) setDurMax(durMaxBound);
-    if (oasMin === undefined) setOASMinSafe(oasMinBound);
-    if (oasMax === undefined) setOASMaxSafe(oasMaxBound);
+    if (oasMin === undefined) setOasMin(oasMinBound);
+    if (oasMax === undefined) setOasMax(oasMaxBound);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [funds]);
 
-  // helper to keep min<=max on OAS when setting defaults
-  const setOASMinSafe = (v: number) => setOasMin(v <= (oasMax ?? v) ? v : oasMax);
-  const setOASMaxSafe = (v: number) => setOasMax(v >= (oasMin ?? v) ? v : oasMin);
-
-  const hasBounds = ytmVals.length > 0; // for disabling inputs during first load
+  const hasBounds = ytmVals.length > 0; // to disable inputs during first load
 
   /* ----------------------- Filter + sort ----------------------- */
   const filteredFunds = useMemo(() => {
     const query = q.trim().toLowerCase();
     return funds
-      .filter((f) => (query ? f.Ticker.toLowerCase().includes(query) || f["Fund Name"]?.toLowerCase().includes(query) : true))
-      .filter((f) => (ytmMin !== undefined ? (f["Average Yield to Maturity"] ?? -Infinity) >= ytmMin : true))
-      .filter((f) => (ytmMax !== undefined ? (f["Average Yield to Maturity"] ?? Infinity) <= ytmMax : true))
-      .filter((f) => (durMin !== undefined ? (f["Effective Duration"] ?? -Infinity) >= durMin : true))
-      .filter((f) => (durMax !== undefined ? (f["Effective Duration"] ?? Infinity) <= durMax : true))
-      .filter((f) => (oasMin !== undefined ? (f["Option Adjusted Spread"] ?? -Infinity) >= oasMin : true))
-      .filter((f) => (oasMax !== undefined ? (f["Option Adjusted Spread"] ?? Infinity) <= oasMax : true));
+      .filter((f) =>
+        query
+          ? f.Ticker.toLowerCase().includes(query) ||
+            f["Fund Name"]?.toLowerCase().includes(query)
+          : true
+      )
+      .filter((f) =>
+        ytmMin !== undefined
+          ? (f["Average Yield to Maturity"] ?? -Infinity) >= ytmMin
+          : true
+      )
+      .filter((f) =>
+        ytmMax !== undefined
+          ? (f["Average Yield to Maturity"] ?? Infinity) <= ytmMax
+          : true
+      )
+      .filter((f) =>
+        durMin !== undefined
+          ? (f["Effective Duration"] ?? -Infinity) >= durMin
+          : true
+      )
+      .filter((f) =>
+        durMax !== undefined
+          ? (f["Effective Duration"] ?? Infinity) <= durMax
+          : true
+      )
+      .filter((f) =>
+        oasMin !== undefined
+          ? (f["Option Adjusted Spread"] ?? -Infinity) >= oasMin
+          : true
+      )
+      .filter((f) =>
+        oasMax !== undefined
+          ? (f["Option Adjusted Spread"] ?? Infinity) <= oasMax
+          : true
+      );
   }, [funds, q, ytmMin, ytmMax, durMin, durMax, oasMin, oasMax]);
 
   const sortedFunds = useMemo(() => {
@@ -308,11 +392,23 @@ const FinancialApp: React.FC = () => {
 
   /* ----------------------- KPIs & charts ----------------------- */
   const avgYtm = useMemo(
-    () => (filteredFunds.length ? filteredFunds.reduce((s, f) => s + (f["Average Yield to Maturity"] ?? 0), 0) / filteredFunds.length : 0),
+    () =>
+      filteredFunds.length
+        ? filteredFunds.reduce(
+            (s, f) => s + (f["Average Yield to Maturity"] ?? 0),
+            0
+          ) / filteredFunds.length
+        : 0,
     [filteredFunds]
   );
   const avgDuration = useMemo(
-    () => (filteredFunds.length ? filteredFunds.reduce((s, f) => s + (f["Effective Duration"] ?? 0), 0) / filteredFunds.length : 0),
+    () =>
+      filteredFunds.length
+        ? filteredFunds.reduce(
+            (s, f) => s + (f["Effective Duration"] ?? 0),
+            0
+          ) / filteredFunds.length
+        : 0,
     [filteredFunds]
   );
 
@@ -323,17 +419,32 @@ const FinancialApp: React.FC = () => {
     const bins: { bucket: string; count: number }[] = [];
     for (let x = min; x <= max; x += step) {
       const next = x + step;
-      bins.push({ bucket: `${x.toFixed(1)}–${next.toFixed(1)}`, count: values.filter((v) => v >= x && v < next).length });
+      bins.push({
+        bucket: `${x.toFixed(1)}–${next.toFixed(1)}`,
+        count: values.filter((v) => v >= x && v < next).length,
+      });
     }
     return bins;
   }
 
   const ytmBins = useMemo(
-    () => makeBins(filteredFunds.map((f) => f["Average Yield to Maturity"]!).filter((n) => typeof n === "number"), 0.5),
+    () =>
+      makeBins(
+        filteredFunds
+          .map((f) => f["Average Yield to Maturity"])
+          .filter((n): n is number => typeof n === "number"),
+        0.5
+      ),
     [filteredFunds]
   );
   const durBins = useMemo(
-    () => makeBins(filteredFunds.map((f) => f["Effective Duration"]!).filter((n) => typeof n === "number"), 1),
+    () =>
+      makeBins(
+        filteredFunds
+          .map((f) => f["Effective Duration"])
+          .filter((n): n is number => typeof n === "number"),
+        1
+      ),
     [filteredFunds]
   );
 
@@ -362,7 +473,9 @@ const FinancialApp: React.FC = () => {
         f["Option Adjusted Spread"] ?? "",
       ].join(",")
     );
-    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob([header + "\n" + rows.join("\n")], {
+      type: "text/csv;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -409,6 +522,27 @@ const FinancialApp: React.FC = () => {
 
   /* ============================ UI ============================ */
 
+  if (error) {
+    return (
+      <div
+        style={{
+          padding: 16,
+          fontFamily: "system-ui",
+          color: "#b91c1c",
+        }}
+      >
+        <h1>Load error</h1>
+        <p>{error}</p>
+        <p>Ensure <code>public/funds.json</code> exists in the deployed build.</p>
+      </div>
+    );
+  }
+  if (loading) {
+    return (
+      <div style={{ padding: 16, fontFamily: "system-ui" }}>Loading…</div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
@@ -416,9 +550,12 @@ const FinancialApp: React.FC = () => {
         <Card className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-2xl shadow-sm">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <CardTitle className="text-3xl font-bold">Fixed Income Dashboard</CardTitle>
+              <CardTitle className="text-3xl font-bold">
+                Fixed Income Dashboard
+              </CardTitle>
               <p className="text-white/90 text-sm">
-                Explore fixed income ETFs: search, filter, visualise and export the data scraped from iShares.
+                Explore fixed income ETFs: search, filter, visualise and export
+                the data scraped from iShares.
               </p>
             </div>
             <ThemeToggle />
@@ -433,8 +570,12 @@ const FinancialApp: React.FC = () => {
                 <TrendingUp className="h-6 w-6 text-indigo-400 dark:text-indigo-300" />
               </div>
               <div>
-                <div className="text-slate-500 dark:text-slate-400 text-sm">Total Funds</div>
-                <div className="text-2xl font-semibold">{filteredFunds.length}</div>
+                <div className="text-slate-500 dark:text-slate-400 text-sm">
+                  Total Funds
+                </div>
+                <div className="text-2xl font-semibold">
+                  {filteredFunds.length}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -445,7 +586,9 @@ const FinancialApp: React.FC = () => {
                 <BarChart2 className="h-6 w-6 text-violet-400 dark:text-violet-300" />
               </div>
               <div>
-                <div className="text-slate-500 dark:text-slate-400 text-sm">Avg. YTM</div>
+                <div className="text-slate-500 dark:text-slate-400 text-sm">
+                  Avg. YTM
+                </div>
                 <div className="text-2xl font-semibold">{fmtPct(avgYtm)}</div>
               </div>
             </CardContent>
@@ -457,8 +600,12 @@ const FinancialApp: React.FC = () => {
                 <Clock className="h-6 w-6 text-fuchsia-400 dark:text-fuchsia-300" />
               </div>
               <div>
-                <div className="text-slate-500 dark:text-slate-400 text-sm">Avg. Duration</div>
-                <div className="text-2xl font-semibold">{fmtYrs(avgDuration)}</div>
+                <div className="text-slate-500 dark:text-slate-400 text-sm">
+                  Avg. Duration
+                </div>
+                <div className="text-2xl font-semibold">
+                  {fmtYrs(avgDuration)}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -474,7 +621,11 @@ const FinancialApp: React.FC = () => {
             <CardContent className="space-y-5">
               <div className="space-y-2">
                 <Label>Search</Label>
-                <Input placeholder="Ticker or name" value={q} onChange={(e) => setQ(e.target.value)} />
+                <Input
+                  placeholder="Ticker or name"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                />
               </div>
 
               {/* YTM */}
@@ -492,7 +643,8 @@ const FinancialApp: React.FC = () => {
                   disabled={!hasBounds}
                 />
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  {(ytmMin ?? ytmMinBound).toFixed(2)}% – {(ytmMax ?? ytmMaxBound).toFixed(2)}%
+                  {(ytmMin ?? ytmMinBound).toFixed(2)}% –{" "}
+                  {(ytmMax ?? ytmMaxBound).toFixed(2)}%
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   <NumberStepper
@@ -533,7 +685,8 @@ const FinancialApp: React.FC = () => {
                   disabled={!hasBounds}
                 />
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  {(durMin ?? durMinBound).toFixed(1)} – {(durMax ?? durMaxBound).toFixed(1)} yrs
+                  {(durMin ?? durMinBound).toFixed(1)} –{" "}
+                  {(durMax ?? durMaxBound).toFixed(1)} yrs
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   <NumberStepper
@@ -574,7 +727,8 @@ const FinancialApp: React.FC = () => {
                   disabled={!hasBounds}
                 />
                 <div className="text-xs text-slate-500 dark:text-slate-400">
-                  {(oasMin ?? oasMinBound).toFixed(0)} – {(oasMax ?? oasMaxBound).toFixed(0)} bps
+                  {(oasMin ?? oasMinBound).toFixed(0)} –{" "}
+                  {(oasMax ?? oasMaxBound).toFixed(0)} bps
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   <NumberStepper
@@ -601,7 +755,9 @@ const FinancialApp: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between pt-2">
-                <div className="text-xs text-slate-500 dark:text-slate-400">{filteredFunds.length} results</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">
+                  {filteredFunds.length} results
+                </div>
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={resetFilters}>
                     Reset
@@ -623,7 +779,9 @@ const FinancialApp: React.FC = () => {
             <CardContent className="h-[360px]">
               {tab === "scatter" && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+                  <ScatterChart
+                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                  >
                     <CartesianGrid stroke={gridColor} />
                     <XAxis
                       dataKey="x"
@@ -664,10 +822,14 @@ const FinancialApp: React.FC = () => {
                     <Scatter
                       name="Funds"
                       data={filteredFunds
-                        .filter((f) => f["Average Yield to Maturity"] !== undefined && f["Effective Duration"] !== undefined)
+                        .filter(
+                          (f) =>
+                            f["Average Yield to Maturity"] !== undefined &&
+                            f["Effective Duration"] !== undefined
+                        )
                         .map((f) => ({
-                          x: f["Effective Duration"],
-                          y: f["Average Yield to Maturity"],
+                          x: f["Effective Duration"]!,
+                          y: f["Average Yield to Maturity"]!,
                           z: f["Option Adjusted Spread"] ?? 0,
                           ticker: f.Ticker,
                         }))}
@@ -681,10 +843,22 @@ const FinancialApp: React.FC = () => {
 
               {tab === "ytm" && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <RBarChart data={ytmBins} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+                  <RBarChart
+                    data={ytmBins}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                  >
                     <CartesianGrid stroke={gridColor} />
-                    <XAxis dataKey="bucket" tick={{ fontSize: 12, fill: axisColor }} axisLine={{ stroke: axisColor }} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: axisColor }} axisLine={{ stroke: axisColor }} tickLine={false} />
+                    <XAxis
+                      dataKey="bucket"
+                      tick={{ fontSize: 12, fill: axisColor }}
+                      axisLine={{ stroke: axisColor }}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12, fill: axisColor }}
+                      axisLine={{ stroke: axisColor }}
+                      tickLine={false}
+                    />
                     <Tooltip
                       contentStyle={{
                         fontSize: 12,
@@ -701,10 +875,22 @@ const FinancialApp: React.FC = () => {
 
               {tab === "duration" && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <RBarChart data={durBins} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+                  <RBarChart
+                    data={durBins}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                  >
                     <CartesianGrid stroke={gridColor} />
-                    <XAxis dataKey="bucket" tick={{ fontSize: 12, fill: axisColor }} axisLine={{ stroke: axisColor }} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: axisColor }} axisLine={{ stroke: axisColor }} tickLine={false} />
+                    <XAxis
+                      dataKey="bucket"
+                      tick={{ fontSize: 12, fill: axisColor }}
+                      axisLine={{ stroke: axisColor }}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12, fill: axisColor }}
+                      axisLine={{ stroke: axisColor }}
+                      tickLine={false}
+                    />
                     <Tooltip
                       contentStyle={{
                         fontSize: 12,
@@ -750,7 +936,8 @@ const FinancialApp: React.FC = () => {
                       onClick={() => {
                         if (col === "Detail") return;
                         const key = col as SortKey;
-                        if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+                        if (sortKey === key)
+                          setSortDir((d) => (d === "asc" ? "desc" : "asc"));
                         else {
                           setSortKey(key);
                           setSortDir("desc");
@@ -765,18 +952,38 @@ const FinancialApp: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {sortedFunds.map((f) => (
-                  <tr key={f.Ticker} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
-                    <td className="py-2 pr-4 whitespace-nowrap font-medium">{f.Ticker}</td>
+                  <tr
+                    key={f.Ticker}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-700/40"
+                  >
+                    <td className="py-2 pr-4 whitespace-nowrap font-medium">
+                      {f.Ticker}
+                    </td>
                     <td className="py-2 pr-4">{f["Fund Name"]}</td>
                     <td className="py-2 pr-4">{fmtUsd(f["Closing Price"])}</td>
-                    <td className="py-2 pr-4">{fmtPct(f["Average Yield to Maturity"])}</td>
-                    <td className="py-2 pr-4">{fmtPct(f["Weighted Avg Coupon"])}</td>
-                    <td className="py-2 pr-4">{fmtYrs(f["Effective Duration"])}</td>
-                    <td className="py-2 pr-4">{fmtYrs(f["Weighted Avg Maturity"])}</td>
-                    <td className="py-2 pr-4">{fmtBps(f["Option Adjusted Spread"])}</td>
+                    <td className="py-2 pr-4">
+                      {fmtPct(f["Average Yield to Maturity"])}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {fmtPct(f["Weighted Avg Coupon"])}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {fmtYrs(f["Effective Duration"])}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {fmtYrs(f["Weighted Avg Maturity"])}
+                    </td>
+                    <td className="py-2 pr-4">
+                      {fmtBps(f["Option Adjusted Spread"])}
+                    </td>
                     <td className="py-2 pr-0">
                       {f.Detail ? (
-                        <a href={f.Detail} className="text-indigo-600 dark:text-indigo-300 hover:underline" target="_blank" rel="noreferrer">
+                        <a
+                          href={f.Detail}
+                          className="text-indigo-600 dark:text-indigo-300 hover:underline"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
                           View
                         </a>
                       ) : (
@@ -791,11 +998,12 @@ const FinancialApp: React.FC = () => {
         </Card>
 
         <div className="text-center text-xs text-slate-500 dark:text-slate-400 pb-6">
-          Data source: iShares (scraped). Visualization for internal analysis only.
+          Data source: iShares (scraped). Visualization for internal analysis
+          only.
         </div>
       </div>
     </div>
   );
 };
 
-export default FinancialApp;
+export default App;
