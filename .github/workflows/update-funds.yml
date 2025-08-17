@@ -7,16 +7,26 @@ on:
   push:
     paths:
       - ".github/workflows/update-funds.yml"
+      - "batch_export_json.py"
+      - "ishares_fixed_income_scraper.py"
 
 permissions:
   contents: write
 
+concurrency:
+  group: update-funds-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   refresh:
-    runs-on: windows-latest   # ok for Selenium + setup-chrome
+    runs-on: windows-latest
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repo (full history for rebase)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,23 +48,50 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium webdriver-manager pandas requests lxml beautifulsoup4
 
+      # Runs your exporter which writes ./public/funds.json
       - name: Run scraper -> public/funds.json
         shell: pwsh
+        env:
+          # Optional: speed up CI while testing. Adjust or remove these.
+          LIMIT: "10"
+          HEADLESS: "true"
+          MAX_PER_MIN: "40"
         run: |
           python .\batch_export_json.py
           if (-not (Test-Path .\public\funds.json)) {
             throw "public\funds.json not found after scraper run"
           }
 
-      - name: Commit & push if changed
+      - name: Commit & push if changed (with rebase & retry)
         shell: pwsh
         run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$($pwd.Path)"
+
+          git fetch origin
+          git checkout $env:GITHUB_REF_NAME
+          git pull --rebase origin $env:GITHUB_REF_NAME
+
           git add .\public\funds.json
-          if (-not (git diff --cached --quiet)) {
-            git commit -m "chore: nightly data refresh"
-            git push
-          } else {
+          if (git diff --cached --quiet) {
             echo "No changes detected"
+            exit 0
           }
+
+          git commit -m "chore: nightly data refresh"
+
+          $max = 3
+          for ($i = 1; $i -le $max; $i++) {
+            if (git push origin $env:GITHUB_REF_NAME) { exit 0 }
+            echo "Push failed (attempt $i/$max). Rebasing and retrying…"
+            git pull --rebase origin $env:GITHUB_REF_NAME
+            Start-Sleep -Seconds 2
+          }
+          throw "Failed to push after $max attempts"
+
+      - name: Upload funds.json artifact (for convenience)
+        uses: actions/upload-artifact@v4
+        with:
+          name: funds.json
+          path: public/funds.json
