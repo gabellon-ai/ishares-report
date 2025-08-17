@@ -1,92 +1,59 @@
-"""
-batch_export_json.py
-Runs the iShares fixed-income scraper and writes ./public/funds.json
+# batch_export_json.py
+# Convert the latest CSV from the scraper into public/funds.json (all rows)
+import json, pathlib, re, os
+import pandas as pd
 
-Local usage:
-  python batch_export_json.py --limit 25 --headless true --max-per-min 40
+ROOT = pathlib.Path(__file__).parent
+PUBLIC = ROOT / "public"
+PUBLIC.mkdir(exist_ok=True)
 
-CI usage:
-  LIMIT=25 HEADLESS=true MAX_PER_MIN=40 python batch_export_json.py
-"""
+def latest_metrics_csv():
+    files = sorted(
+        ROOT.glob("ishares_fixed_income_metrics_*.csv"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    if not files:
+        raise SystemExit("No metrics CSV found. Make sure the scraper step ran.")
+    return files[0]
 
-from __future__ import annotations
+_num_tail = re.compile(r"\s*(%|bps?|yrs?)\s*$", re.I)
+def to_number(v):
+    if pd.isna(v): return None
+    t = str(v).strip().replace("$", "").replace(",", "")
+    t = _num_tail.sub("", t)
+    try:
+        return float(t)
+    except Exception:
+        return None
 
-import argparse
-import json
-import os
-import pathlib
-from typing import List, Dict, Any
+def main(limit=None):
+    csv_path = latest_metrics_csv()
+    df = pd.read_csv(csv_path)
 
-# Your scraper must sit next to this file
-import ishares_fixed_income_scraper as scr
+    rows = []
+    for _, r in df.iterrows():
+        rows.append({
+            "Ticker": r.get("Ticker"),
+            "Fund Name": r.get("Fund Name"),
+            "Closing Price": to_number(r.get("Closing Price")),
+            "Average Yield to Maturity": to_number(r.get("Average Yield to Maturity")),
+            "Weighted Avg Coupon": to_number(r.get("Weighted Avg Coupon")),
+            "Effective Duration": to_number(r.get("Effective Duration")),
+            "Weighted Avg Maturity": to_number(r.get("Weighted Avg Maturity")),
+            "Option Adjusted Spread": to_number(r.get("Option Adjusted Spread")),
+            "Detail": r.get("Detail URL") or r.get("Detail") or None,
+        })
 
-NUM_FIELDS = [
-    "Closing Price",
-    "Average Yield to Maturity",
-    "Weighted Avg Coupon",
-    "Effective Duration",
-    "Weighted Avg Maturity",
-    "Option Adjusted Spread",
-]
-
-def _parse_bool(x: str | bool | None, default: bool) -> bool:
-    if isinstance(x, bool):
-        return x
-    if x is None:
-        return default
-    return str(x).strip().lower() in {"1", "true", "t", "yes", "y"}
-
-def export_json(
-    out_path: pathlib.Path,
-    *,
-    limit: int | None = None,
-    headless: bool = True,
-    max_per_min: int = 40,
-) -> List[Dict[str, Any]]:
-    print(f"[batch] headless={headless}  max_per_min={max_per_min}  limit={limit or 'ALL'}")
-
-    # 1) base fund list
-    funds = scr.scrape_fixed_income_list(headless=headless)
     if limit:
-        funds = funds[: int(limit)]
-    print(f"[batch] base fund count: {len(funds)}")
+        rows = rows[:limit]
 
-    # 2) detailed metrics
-    rows = scr.scrape_details_for_funds(funds, headless=headless, max_per_min=max_per_min)
-    print(f"[batch] detailed rows: {len(rows)}")
-
-    # 3) trim float noise for small Git diffs
-    for r in rows:
-        for k in NUM_FIELDS:
-            v = r.get(k)
-            if isinstance(v, float):
-                r[k] = round(v, 4)
-
-    # 4) write JSON
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
-    print(f"[batch] wrote {out_path.resolve()} ({len(rows)} records)")
-    return rows
-
-def main():
-    default_out = pathlib.Path(__file__).resolve().parent / "public" / "funds.json"
-
-    ap = argparse.ArgumentParser(description="Export iShares fixed-income metrics to public/funds.json")
-    ap.add_argument("--limit", type=int, default=None, help="Scrape only first N funds")
-    ap.add_argument("--headless", type=str, default=None, help="true/false (default true)")
-    ap.add_argument("--max-per-min", type=int, default=40, help="Throttle detail requests per minute")
-    ap.add_argument("--out", type=str, default=str(default_out), help="Output path (default: public/funds.json)")
-    args = ap.parse_args()
-
-    # env overrides (handy for Actions)
-    limit = int(os.getenv("LIMIT")) if os.getenv("LIMIT", "").strip() else args.limit
-    headless = _parse_bool(os.getenv("HEADLESS") or args.headless, True)
-    max_per_min = int(os.getenv("MAX_PER_MIN") or args.max_per_min)
-    out_path = pathlib.Path(os.getenv("OUT") or args.out)
-
-    rows = export_json(out_path, limit=limit, headless=headless, max_per_min=max_per_min)
-    if not rows:
-        raise SystemExit("No rows scraped; failing job so workflow shows red.")
+    out = PUBLIC / "funds.json"
+    out.write_text(json.dumps(rows, indent=2), encoding="utf-8")
+    print(f"Wrote {len(rows)} rows -> {out}")
 
 if __name__ == "__main__":
-    main()
+    # Optional: MAX_FUNDS=100 to cap during testing; unset for all.
+    lim = os.getenv("MAX_FUNDS")
+    lim = int(lim) if (lim and lim.isdigit()) else None
+    main(limit=lim)
