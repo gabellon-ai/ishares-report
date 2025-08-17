@@ -38,12 +38,39 @@ jobs:
         shell: pwsh
         run: New-Item -ItemType Directory -Force -Path public | Out-Null
 
-      # 👇 run the scraper first to produce the CSVs in the workspace
-      - name: Run scraper (creates ishares_fixed_income_metrics_*.csv)
+      # 1) Run the scraper to create ishares_fixed_income_metrics_*.csv
+      - name: Run scraper (writes CSVs)
         shell: pwsh
         run: python .\ishares_fixed_income_scraper.py
 
-      # 👇 then convert the latest CSV into public/funds.json (ALL rows)
+      # 2) If your script saved CSVs outside the repo (e.g., C:\home\...), copy them back
+      - name: Locate metrics CSVs and copy to workspace if needed
+        shell: pwsh
+        run: |
+          $found = $false
+          $ws = $env:GITHUB_WORKSPACE
+          # search where they’re likely to land
+          foreach ($root in @($ws, 'C:\home', 'D:\a')) {
+            if (Test-Path $root) {
+              Get-ChildItem -Path $root -Recurse -Filter 'ishares_fixed_income_metrics_*.csv' -ErrorAction SilentlyContinue |
+                ForEach-Object {
+                  Write-Host "Found: $($_.FullName)"
+                  if ($_.DirectoryName -ne $ws) {
+                    Copy-Item $_.FullName $ws -Force
+                    Write-Host "Copied to workspace: $ws"
+                  }
+                  $found = $true
+                }
+            }
+          }
+          if (-not $found) {
+            Write-Error "No metrics CSV found after scraping."
+            exit 1
+          }
+          Write-Host "Metrics present in workspace:"
+          Get-ChildItem -Path $ws -Filter 'ishares_fixed_income_metrics_*.csv'
+
+      # 3) Convert the latest CSV to public/funds.json (ALL rows)
       - name: Export to funds.json
         run: python .\batch_export_json.py
 
@@ -51,7 +78,7 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "funds.json size: " (Get-Item .\public\funds.json).Length "bytes"
-          Write-Host "First lines:"; Get-Content .\public\funds.json -TotalCount 5
+          Get-Content .\public\funds.json -TotalCount 5
 
       - name: Commit & push if changed (rebase-safe)
         shell: pwsh
@@ -61,12 +88,11 @@ jobs:
           git add .\public\funds.json
           if (-not (git diff --cached --quiet)) {
             git commit -m "chore: refresh funds.json"
-            $max=3
-            for ($i=1; $i -le $max; $i++) {
+            for ($i=1; $i -le 3; $i++) {
               git pull --rebase origin $env:GITHUB_REF_NAME || exit 1
               git push && exit 0
             }
-            throw "Failed to push after $max attempts"
+            throw "Failed to push after 3 attempts"
           } else {
             echo "No changes to commit"
           }
