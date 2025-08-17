@@ -2,11 +2,18 @@
 # Requirements:
 #   pip install selenium webdriver-manager pandas
 #
-# Usage (Spyder or terminal):
-#   %runfile /home/david/DataWarehouse/Code/Production/untitled2.py --wdir
-#   # then:
-#   df
+# What changed:
+# - Output directory now lives inside the repo:
+#     - In GitHub Actions:   $GITHUB_WORKSPACE/data
+#     - Locally:             ./data
+#     - Or override with env OUTPUT_DIR=/absolute/or/relative/path
+#
+# Usage:
+#   python ishares_fixed_income_scraper.py
+#   # CSVs will be in ./data (or as above)
+#   # batch_export_json.py can then read the latest *metrics_*.csv
 
+import os
 import time, re, pathlib, csv
 from datetime import datetime
 
@@ -21,11 +28,32 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 HOME = "https://www.ishares.com/us/products/etf-investments"
-FAST_URL = (HOME + "#/?productView=etf&dataView=fixedIncomeView"
-            "&sortColumn=totalNetAssets&sortDirection=desc")
+FAST_URL = (
+    HOME
+    + "#/?productView=etf&dataView=fixedIncomeView"
+      "&sortColumn=totalNetAssets&sortDirection=desc"
+)
 
-# --------- Preferred directory (with fallback to CWD) ----------
-PREFERRED_DIR = pathlib.Path("/home/david/DataWarehouse/Data/Program_Data")
+# --------- Preferred directory (repo-local) ----------
+# 1) OUTPUT_DIR (if you want to override explicitly)
+# 2) GITHUB_WORKSPACE/data (on Actions)
+# 3) ./data (when running locally)
+def _detect_default_dir() -> pathlib.Path:
+    # Explicit override
+    env_out = os.getenv("OUTPUT_DIR")
+    if env_out:
+        return pathlib.Path(env_out)
+
+    # GitHub Actions workspace
+    gw = os.getenv("GITHUB_WORKSPACE")
+    if gw:
+        return pathlib.Path(gw) / "data"
+
+    # Local default: folder next to this file
+    this_dir = pathlib.Path(__file__).resolve().parent
+    return this_dir / "data"
+
+PREFERRED_DIR = _detect_default_dir()
 
 def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
@@ -33,7 +61,9 @@ def log(msg):
 def make_driver(headless=True):
     opts = Options()
     if headless:
+        # newer headless for Chrome 109+
         opts.add_argument("--headless=new")
+        # speed-ups when headless
         prefs = {
             "profile.managed_default_content_settings.images": 2,
             "profile.default_content_setting_values.notifications": 2,
@@ -44,6 +74,7 @@ def make_driver(headless=True):
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.page_load_strategy = "eager"
+
     # Anti-bot hardening
     opts.add_argument("--disable-blink-features=AutomationControlled")
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -52,11 +83,16 @@ def make_driver(headless=True):
         "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
     )
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
+
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=opts
+    )
     try:
-        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-            "source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});"
-        })
+        driver.execute_cdp_cmd(
+            "Page.addScriptToEvaluateOnNewDocument",
+            {"source": "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});"}
+        )
     except Exception:
         pass
     return driver
@@ -285,7 +321,6 @@ def scrape_fixed_income_list(headless=True):
 # NOTE: "Convexity" removed per your request.
 METRIC_PATTERNS = {
     "Closing Price": [
-        # Require a price-looking number with two decimals to avoid stray integers (e.g., "7")
         r"\bclosing\s+price\b.*?(\$?\d{1,3}(?:,\d{3})*\.\d{2})",
         r"\bmarket\s+price\b.*?(\$?\d{1,3}(?:,\d{3})*\.\d{2})",
         r"\blast\s+price\b.*?(\$?\d{1,3}(?:,\d{3})*\.\d{2})",
@@ -294,7 +329,7 @@ METRIC_PATTERNS = {
         r"\byield\s+to\s+maturity\b.*?([0-9]+(?:\.[0-9]+)?)\s*%",
         r"\bavg(?:\.|erage)?\s+ytm\b.*?([0-9]+(?:\.[0-9]+)?)\s*%",
         r"\bytms?\b.*?([0-9]+(?:\.[0-9]+)?)\s*%",
-        r"\byield\s+to\s+worst\b.*?([0-9]+(?:\.[0-9]+)?)\s*%",   # captures YTW when used instead of YTM
+        r"\byield\s+to\s+worst\b.*?([0-9]+(?:\.[0-9]+)?)\s*%",
         r"\bytws?\b.*?([0-9]+(?:\.[0-9]+)?)\s*%",
     ],
     "Weighted Avg Coupon": [
@@ -331,24 +366,17 @@ def _parse_number(s):
         return None
 
 def _extract_price_like(text):
-    """Return a price-looking number with two decimals (e.g., $104.23 or 104.23)."""
     if not text:
         return None
     m = re.search(r"\$?\d{1,3}(?:,\d{3})*\.\d{2}", text)
     return m.group(0) if m else None
 
 def get_closing_price_dom(driver):
-    """
-    DOM-first attempt to get Closing Price.
-    Tries common iShares hooks and label-adjacent values, then returns a parsed float-compatible string.
-    """
     candidates = [
-        # class/id hooks seen on iShares details pages
         "[class*='closingPrice']",
         "[data-automation-id*='closingPrice']",
         "#fundamentalsAndRisk .col-closingPrice",
         ".col-closingPrice",
-        # sometimes surfaced as Market Price (same value we want for 'closing price')
         "[class*='marketPrice']",
         "[data-automation-id*='marketPrice']",
     ]
@@ -358,7 +386,6 @@ def get_closing_price_dom(driver):
             txt = el.text.strip()
             price = _extract_price_like(txt)
             if not price:
-                # look for a numeric child
                 child = el.find_element(By.XPATH, ".//span|.//div|.//dd")
                 txt2 = child.text.strip()
                 price = _extract_price_like(txt2)
@@ -367,11 +394,13 @@ def get_closing_price_dom(driver):
         except Exception:
             pass
 
-    # Label-adjacent fallback: find 'Closing Price' and grab next sibling-ish text
     try:
         el = driver.find_element(By.XPATH, "//*[contains(translate(.,'CLOSING PRICE','closing price'),'closing price')]")
-        # next sibling or nearby numeric
-        for xp in ["following-sibling::*[1]", "parent::*/*[position()>1][1]", "ancestor::*[self::div or self::section][1]//*[self::div or self::span][1]"]:
+        for xp in [
+            "following-sibling::*[1]",
+            "parent::*/*[position()>1][1]",
+            "ancestor::*[self::div or self::section][1]//*[self::div or self::span][1]",
+        ]:
             try:
                 v = el.find_element(By.XPATH, xp).text.strip()
                 price = _extract_price_like(v)
@@ -403,25 +432,21 @@ def scrape_fund_metrics(driver, url, wait_secs=15):
     try:
         driver.get(url)
         WebDriverWait(driver, wait_secs).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-        time.sleep(0.7)  # JS render
+        time.sleep(0.7)
         body = driver.find_element(By.TAG_NAME, "body").text
 
-        # Parse everything from text
         metrics = extract_metrics_from_body_text(body)
 
-        # --- Closing Price (DOM-first) overrides/fills if missing ---
         closing_price_str = get_closing_price_dom(driver)
         if closing_price_str:
             metrics["Closing Price"] = _parse_number(closing_price_str)
         elif metrics.get("Closing Price") is None:
-            # one more try after a short wait (lazy content)
             time.sleep(0.6)
             body = driver.find_element(By.TAG_NAME, "body").text
             fall = extract_metrics_from_body_text(body)
             if fall.get("Closing Price") is not None:
                 metrics["Closing Price"] = fall["Closing Price"]
 
-        # small second pass for Effective Duration if it came back None
         if metrics.get("Effective Duration") is None:
             time.sleep(0.4)
             body = driver.find_element(By.TAG_NAME, "body").text
@@ -436,7 +461,7 @@ def scrape_fund_metrics(driver, url, wait_secs=15):
 def scrape_details_for_funds(fund_rows, headless=True, max_per_min=40):
     driver = make_driver(headless=headless)
     results = []
-    per_req_sleep = max(0.0, 60.0/max_per_min)
+    per_req_sleep = max(0.0, 60.0 / max_per_min)
     try:
         for i, row in enumerate(fund_rows, 1):
             url = row.get("url", "")
@@ -454,29 +479,32 @@ def scrape_details_for_funds(fund_rows, headless=True, max_per_min=40):
                 "Detail URL": url,
             }
             results.append(rec)
-            log(f"[{i}/{len(fund_rows)}] {ticker}: Close={rec['Closing Price']}  EffDur={rec['Effective Duration']} yrs  YTM={rec['Average Yield to Maturity']}%  OAS={rec['Option Adjusted Spread']} bps")
+            log(f"[{i}/{len(fund_rows)}] {ticker}: Close={rec['Closing Price']}  "
+                f"EffDur={rec['Effective Duration']} yrs  "
+                f"YTM={rec['Average Yield to Maturity']}%  "
+                f"OAS={rec['Option Adjusted Spread']} bps")
             time.sleep(per_req_sleep)
     finally:
         driver.quit()
     return results
 
 # ----------------------- Save helpers -----------------------
-def choose_save_dir():
-    preferred_dir = PREFERRED_DIR
-    fallback_dir = pathlib.Path.cwd()
+def choose_save_dir() -> pathlib.Path:
+    save_dir = PREFERRED_DIR
     try:
-        preferred_dir.mkdir(parents=True, exist_ok=True)
-        test_file = preferred_dir / ".write_test"
+        save_dir.mkdir(parents=True, exist_ok=True)
+        # quick write test to catch permission issues on CI
+        test_file = save_dir / ".write_test"
         test_file.write_text("ok", encoding="utf-8")
-        test_file.unlink()
-        save_dir = preferred_dir
-        print(f"Saving to preferred directory: {save_dir}")
+        test_file.unlink(missing_ok=True)
+        print(f"Saving to repository directory: {save_dir}")
     except Exception as e:
+        # Fallback to CWD if anything goes wrong
         print(f"WARNING: Cannot write to preferred directory ({e}). Using current directory.")
-        save_dir = fallback_dir
+        save_dir = pathlib.Path.cwd()
     return save_dir
 
-def prune_old_timestamped_files(dir_path: pathlib.Path, stem: str, keep:int=5):
+def prune_old_timestamped_files(dir_path: pathlib.Path, stem: str, keep: int = 5):
     files = sorted(
         dir_path.glob(f"{stem}_*.csv"),
         key=lambda p: p.stat().st_mtime,
@@ -498,7 +526,7 @@ def write_csv(path: pathlib.Path, headers, rows_iterable):
 
 # ----------------------- Main (always details) -----------------------
 if __name__ == "__main__":
-    headless = True  # Spyder run: keep headless; flip to False for debugging if needed
+    headless = True  # flip to False for local debugging with a visible browser
 
     # 1) Scrape base list with URLs
     funds = scrape_fixed_income_list(headless=headless)
@@ -508,7 +536,7 @@ if __name__ == "__main__":
     if len(funds) > 10:
         print(f"... ({len(funds)-10} more)")
 
-    # 2) Save base list CSV
+    # 2) Save base list CSV (in repo-local data/)
     save_dir = choose_save_dir()
     base_stem = "ishares_fixed_income"
     prune_old_timestamped_files(save_dir, base_stem, keep=5)
@@ -543,8 +571,10 @@ if __name__ == "__main__":
     # Save details CSV (keep only requested cols)
     details_stem = "ishares_fixed_income_metrics"
     details_file = save_dir / f"{details_stem}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-    keep_cols = ["Ticker","Fund Name","Closing Price","Average Yield to Maturity",
-                 "Weighted Avg Coupon","Effective Duration","Weighted Avg Maturity",
-                 "Option Adjusted Spread"]
+    keep_cols = [
+        "Ticker","Fund Name","Closing Price","Average Yield to Maturity",
+        "Weighted Avg Coupon","Effective Duration","Weighted Avg Maturity",
+        "Option Adjusted Spread"
+    ]
     df[keep_cols].to_csv(details_file, index=False)
     print(f"Saved metrics to: {details_file.resolve()}")
