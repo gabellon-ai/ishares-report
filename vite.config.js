@@ -1,4 +1,4 @@
-// vite.config.ts (or .js)
+// vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -6,5 +6,5 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
-  // base: '/'      // Vercel = '/', GitHub Pages would be '/ishares-report/'
+  // IMPORTANT: on Vercel, keep base default ('/'). Do NOT use '/ishares-report/'.
 });
