@@ -1,7 +1,1 @@
-// root/postcss.config.js
-module.exports = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
+module.exports = { plugins: [] }   // disable Tailwind for this safe-boot
