@@ -7,8 +7,7 @@
     "Weighted Avg Coupon": 3.84,
     "Effective Duration": 5.85,
     "Weighted Avg Maturity": 8.07,
-    "Option Adjusted Spread": 30.68,
-    "Detail": null
+    "Option Adjusted Spread": 30.68
   },
   {
     "Ticker": "SGOV",
@@ -18,8 +17,7 @@
     "Weighted Avg Coupon": 4.44,
     "Effective Duration": 0.11,
     "Weighted Avg Maturity": 0.12,
-    "Option Adjusted Spread": 7.23,
-    "Detail": null
+    "Option Adjusted Spread": 7.23
   },
   {
     "Ticker": "TLT",
@@ -29,8 +27,7 @@
     "Weighted Avg Coupon": 4.43,
     "Effective Duration": 15.52,
     "Weighted Avg Maturity": 25.86,
-    "Option Adjusted Spread": 0.12,
-    "Detail": null
+    "Option Adjusted Spread": 0.12
   },
   {
     "Ticker": "MBB",
@@ -40,8 +37,7 @@
     "Weighted Avg Coupon": 4.11,
     "Effective Duration": 5.66,
     "Weighted Avg Maturity": 7.0,
-    "Option Adjusted Spread": 42.49,
-    "Detail": null
+    "Option Adjusted Spread": 42.49
   },
   {
     "Ticker": "MUB",
@@ -51,8 +47,7 @@
     "Weighted Avg Coupon": 0.05,
     "Effective Duration": 7.17,
     "Weighted Avg Maturity": 7.88,
-    "Option Adjusted Spread": 33.65,
-    "Detail": null
+    "Option Adjusted Spread": 33.65
   },
   {
     "Ticker": "IEF",
@@ -62,8 +57,7 @@
     "Weighted Avg Coupon": 3.75,
     "Effective Duration": 6.97,
     "Weighted Avg Maturity": 8.47,
-    "Option Adjusted Spread": 1.77,
-    "Detail": null
+    "Option Adjusted Spread": 1.77
   },
   {
     "Ticker": "IUSB",
@@ -73,8 +67,7 @@
     "Weighted Avg Coupon": 0.06,
     "Effective Duration": 5.64,
     "Weighted Avg Maturity": 7.87,
-    "Option Adjusted Spread": 51.7,
-    "Detail": null
+    "Option Adjusted Spread": 51.7
   },
   {
     "Ticker": "LQD",
@@ -84,8 +77,7 @@
     "Weighted Avg Coupon": 4.43,
     "Effective Duration": 8.04,
     "Weighted Avg Maturity": 12.8,
-    "Option Adjusted Spread": 76.31,
-    "Detail": null
+    "Option Adjusted Spread": 76.31
   },
   {
     "Ticker": "GOVT",
@@ -95,8 +87,7 @@
     "Weighted Avg Coupon": 3.42,
     "Effective Duration": 5.65,
     "Weighted Avg Maturity": 7.52,
-    "Option Adjusted Spread": 0.14,
-    "Detail": null
+    "Option Adjusted Spread": 0.14
   },
   {
     "Ticker": "USHY",
@@ -106,8 +97,7 @@
     "Weighted Avg Coupon": 6.78,
     "Effective Duration": 2.93,
     "Weighted Avg Maturity": 3.77,
-    "Option Adjusted Spread": 281.71,
-    "Detail": null
+    "Option Adjusted Spread": 281.71
   },
   {
     "Ticker": "SHY",
@@ -117,8 +107,7 @@
     "Weighted Avg Coupon": 3.94,
     "Effective Duration": 1.84,
     "Weighted Avg Maturity": 1.93,
-    "Option Adjusted Spread": 0.54,
-    "Detail": null
+    "Option Adjusted Spread": 0.54
   },
   {
     "Ticker": "IGSB",
@@ -128,8 +117,7 @@
     "Weighted Avg Coupon": 4.26,
     "Effective Duration": 2.66,
     "Weighted Avg Maturity": 2.96,
-    "Option Adjusted Spread": 58.3,
-    "Detail": null
+    "Option Adjusted Spread": 58.3
   },
   {
     "Ticker": "SHV",
@@ -139,8 +127,7 @@
     "Weighted Avg Coupon": 4.45,
     "Effective Duration": 0.32,
     "Weighted Avg Maturity": 0.33,
-    "Option Adjusted Spread": 3.88,
-    "Detail": null
+    "Option Adjusted Spread": 3.88
   },
   {
     "Ticker": "HYG",
@@ -150,8 +137,7 @@
     "Weighted Avg Coupon": 5.74,
     "Effective Duration": 2.88,
     "Weighted Avg Maturity": 3.58,
-    "Option Adjusted Spread": 272.44,
-    "Detail": null
+    "Option Adjusted Spread": 272.44
   },
   {
     "Ticker": "IEI",
@@ -161,8 +147,7 @@
     "Weighted Avg Coupon": 3.33,
     "Effective Duration": 4.25,
     "Weighted Avg Maturity": 4.69,
-    "Option Adjusted Spread": 0.31,
-    "Detail": null
+    "Option Adjusted Spread": 0.31
   },
   {
     "Ticker": "IGIB",
@@ -172,8 +157,7 @@
     "Weighted Avg Coupon": 4.47,
     "Effective Duration": 6.07,
     "Weighted Avg Maturity": 7.48,
-    "Option Adjusted Spread": 86.49,
-    "Detail": null
+    "Option Adjusted Spread": 86.49
   },
   {
     "Ticker": "USIG",
@@ -183,8 +167,7 @@
     "Weighted Avg Coupon": 4.55,
     "Effective Duration": 6.44,
     "Weighted Avg Maturity": 9.92,
-    "Option Adjusted Spread": 75.42,
-    "Detail": null
+    "Option Adjusted Spread": 75.42
   },
   {
     "Ticker": "TIP",
@@ -194,8 +177,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 6.42,
     "Weighted Avg Maturity": 7.14,
-    "Option Adjusted Spread": 3.95,
-    "Detail": null
+    "Option Adjusted Spread": 3.95
   },
   {
     "Ticker": "EMB",
@@ -205,8 +187,7 @@
     "Weighted Avg Coupon": 5.41,
     "Effective Duration": 6.78,
     "Weighted Avg Maturity": 11.23,
-    "Option Adjusted Spread": 200.19,
-    "Detail": null
+    "Option Adjusted Spread": 200.19
   },
   {
     "Ticker": "STIP",
@@ -216,8 +197,7 @@
     "Weighted Avg Coupon": 0.03,
     "Effective Duration": 2.48,
     "Weighted Avg Maturity": 2.58,
-    "Option Adjusted Spread": 13.82,
-    "Detail": null
+    "Option Adjusted Spread": 13.82
   },
   {
     "Ticker": "TLH",
@@ -227,8 +207,7 @@
     "Weighted Avg Coupon": 4.18,
     "Effective Duration": 12.06,
     "Weighted Avg Maturity": 17.01,
-    "Option Adjusted Spread": 0.13,
-    "Detail": null
+    "Option Adjusted Spread": 0.13
   },
   {
     "Ticker": "BINC",
@@ -238,8 +217,7 @@
     "Weighted Avg Coupon": 0.5,
     "Effective Duration": 3.68,
     "Weighted Avg Maturity": 4.33,
-    "Option Adjusted Spread": 184.16,
-    "Detail": null
+    "Option Adjusted Spread": 184.16
   },
   {
     "Ticker": "IAGG",
@@ -249,8 +227,7 @@
     "Weighted Avg Coupon": 4.18,
     "Effective Duration": 6.66,
     "Weighted Avg Maturity": 8.31,
-    "Option Adjusted Spread": 29.59,
-    "Detail": null
+    "Option Adjusted Spread": 29.59
   },
   {
     "Ticker": "SUB",
@@ -260,8 +237,7 @@
     "Weighted Avg Coupon": 0.07,
     "Effective Duration": 1.87,
     "Weighted Avg Maturity": 2.01,
-    "Option Adjusted Spread": 14.56,
-    "Detail": null
+    "Option Adjusted Spread": 14.56
   },
   {
     "Ticker": "FLOT",
@@ -271,8 +247,7 @@
     "Weighted Avg Coupon": 5.16,
     "Effective Duration": 0.02,
     "Weighted Avg Maturity": 1.83,
-    "Option Adjusted Spread": 31.16,
-    "Detail": null
+    "Option Adjusted Spread": 31.16
   },
   {
     "Ticker": "SHYG",
@@ -282,8 +257,7 @@
     "Weighted Avg Coupon": 7.1,
     "Effective Duration": 2.09,
     "Weighted Avg Maturity": 2.69,
-    "Option Adjusted Spread": 284.8,
-    "Detail": null
+    "Option Adjusted Spread": 284.8
   },
   {
     "Ticker": "TFLO",
@@ -293,8 +267,7 @@
     "Weighted Avg Coupon": 4.48,
     "Effective Duration": 0.01,
     "Weighted Avg Maturity": 1.02,
-    "Option Adjusted Spread": 4.15,
-    "Detail": null
+    "Option Adjusted Spread": 4.15
   },
   {
     "Ticker": "ICSH",
@@ -304,8 +277,7 @@
     "Weighted Avg Coupon": 4.82,
     "Effective Duration": 0.56,
     "Weighted Avg Maturity": 0.76,
-    "Option Adjusted Spread": 28.17,
-    "Detail": null
+    "Option Adjusted Spread": 28.17
   },
   {
     "Ticker": "ISTB",
@@ -315,8 +287,7 @@
     "Weighted Avg Coupon": 4.03,
     "Effective Duration": 2.58,
     "Weighted Avg Maturity": 2.85,
-    "Option Adjusted Spread": 45.36,
-    "Detail": null
+    "Option Adjusted Spread": 45.36
   },
   {
     "Ticker": "EAGG",
@@ -326,8 +297,7 @@
     "Weighted Avg Coupon": 3.89,
     "Effective Duration": 5.84,
     "Weighted Avg Maturity": 8.07,
-    "Option Adjusted Spread": 30.34,
-    "Detail": null
+    "Option Adjusted Spread": 30.34
   },
   {
     "Ticker": "GVI",
@@ -337,8 +307,7 @@
     "Weighted Avg Coupon": 3.43,
     "Effective Duration": 3.71,
     "Weighted Avg Maturity": 4.22,
-    "Option Adjusted Spread": 20.34,
-    "Detail": null
+    "Option Adjusted Spread": 20.34
   },
   {
     "Ticker": "NEAR",
@@ -348,8 +317,7 @@
     "Weighted Avg Coupon": 4.73,
     "Effective Duration": 1.94,
     "Weighted Avg Maturity": 2.41,
-    "Option Adjusted Spread": 61.53,
-    "Detail": null
+    "Option Adjusted Spread": 61.53
   },
   {
     "Ticker": "CMF",
@@ -359,8 +327,7 @@
     "Weighted Avg Coupon": 0.08,
     "Effective Duration": 7.0,
     "Weighted Avg Maturity": 7.7,
-    "Option Adjusted Spread": 17.07,
-    "Detail": null
+    "Option Adjusted Spread": 17.07
   },
   {
     "Ticker": "IBDR",
@@ -370,8 +337,7 @@
     "Weighted Avg Coupon": 4.22,
     "Effective Duration": 0.77,
     "Weighted Avg Maturity": 0.8,
-    "Option Adjusted Spread": 35.63,
-    "Detail": null
+    "Option Adjusted Spread": 35.63
   },
   {
     "Ticker": "IBDS",
@@ -381,8 +347,7 @@
     "Weighted Avg Coupon": 4.37,
     "Effective Duration": 1.66,
     "Weighted Avg Maturity": 1.78,
-    "Option Adjusted Spread": 40.93,
-    "Detail": null
+    "Option Adjusted Spread": 40.93
   },
   {
     "Ticker": "IBDT",
@@ -392,8 +357,7 @@
     "Weighted Avg Coupon": 4.58,
     "Effective Duration": 2.52,
     "Weighted Avg Maturity": 2.74,
-    "Option Adjusted Spread": 50.31,
-    "Detail": null
+    "Option Adjusted Spread": 50.31
   },
   {
     "Ticker": "ICVT",
@@ -403,8 +367,7 @@
     "Weighted Avg Coupon": 2.0,
     "Effective Duration": 1.17,
     "Weighted Avg Maturity": 3.13,
-    "Option Adjusted Spread": null,
-    "Detail": null
+    "Option Adjusted Spread": NaN
   },
   {
     "Ticker": "IBDQ",
@@ -414,8 +377,7 @@
     "Weighted Avg Coupon": 4.0,
     "Effective Duration": 0.14,
     "Weighted Avg Maturity": 0.19,
-    "Option Adjusted Spread": 21.99,
-    "Detail": null
+    "Option Adjusted Spread": 21.99
   },
   {
     "Ticker": "IBDU",
@@ -425,8 +387,7 @@
     "Weighted Avg Coupon": 4.7,
     "Effective Duration": 3.37,
     "Weighted Avg Maturity": 3.74,
-    "Option Adjusted Spread": 63.32,
-    "Detail": null
+    "Option Adjusted Spread": 63.32
   },
   {
     "Ticker": "IGLB",
@@ -436,8 +397,7 @@
     "Weighted Avg Coupon": 5.13,
     "Effective Duration": 12.12,
     "Weighted Avg Maturity": 22.17,
-    "Option Adjusted Spread": 90.34,
-    "Detail": null
+    "Option Adjusted Spread": 90.34
   },
   {
     "Ticker": "SLQD",
@@ -447,8 +407,7 @@
     "Weighted Avg Coupon": 3.97,
     "Effective Duration": 2.15,
     "Weighted Avg Maturity": 2.35,
-    "Option Adjusted Spread": 44.0,
-    "Detail": null
+    "Option Adjusted Spread": 44.0
   },
   {
     "Ticker": "IBDV",
@@ -458,8 +417,7 @@
     "Weighted Avg Coupon": 4.59,
     "Effective Duration": 4.21,
     "Weighted Avg Maturity": 4.69,
-    "Option Adjusted Spread": 62.94,
-    "Detail": null
+    "Option Adjusted Spread": 62.94
   },
   {
     "Ticker": "IBTG",
@@ -469,8 +427,7 @@
     "Weighted Avg Coupon": 4.08,
     "Effective Duration": 0.86,
     "Weighted Avg Maturity": 0.88,
-    "Option Adjusted Spread": 0.63,
-    "Detail": null
+    "Option Adjusted Spread": 0.63
   },
   {
     "Ticker": "IBTF",
@@ -480,8 +437,7 @@
     "Weighted Avg Coupon": 4.28,
     "Effective Duration": 0.17,
     "Weighted Avg Maturity": 0.19,
-    "Option Adjusted Spread": 5.24,
-    "Detail": null
+    "Option Adjusted Spread": 5.24
   },
   {
     "Ticker": "HIMU",
@@ -491,8 +447,7 @@
     "Weighted Avg Coupon": 5.39,
     "Effective Duration": 10.08,
     "Weighted Avg Maturity": 15.09,
-    "Option Adjusted Spread": 203.74,
-    "Detail": null
+    "Option Adjusted Spread": 203.74
   },
   {
     "Ticker": "FALN",
@@ -502,8 +457,7 @@
     "Weighted Avg Coupon": 6.2,
     "Effective Duration": 4.84,
     "Weighted Avg Maturity": 7.35,
-    "Option Adjusted Spread": 254.25,
-    "Detail": null
+    "Option Adjusted Spread": 254.25
   },
   {
     "Ticker": "IBDW",
@@ -513,8 +467,7 @@
     "Weighted Avg Coupon": 4.84,
     "Effective Duration": 5.07,
     "Weighted Avg Maturity": 5.72,
-    "Option Adjusted Spread": 70.37,
-    "Detail": null
+    "Option Adjusted Spread": 70.37
   },
   {
     "Ticker": "IBTH",
@@ -524,8 +477,7 @@
     "Weighted Avg Coupon": 3.98,
     "Effective Duration": 1.77,
     "Weighted Avg Maturity": 1.85,
-    "Option Adjusted Spread": 0.71,
-    "Detail": null
+    "Option Adjusted Spread": 0.71
   },
   {
     "Ticker": "QLTA",
@@ -535,8 +487,7 @@
     "Weighted Avg Coupon": 4.3,
     "Effective Duration": 6.7,
     "Weighted Avg Maturity": 10.4,
-    "Option Adjusted Spread": 55.94,
-    "Detail": null
+    "Option Adjusted Spread": 55.94
   },
   {
     "Ticker": "HYDB",
@@ -546,8 +497,7 @@
     "Weighted Avg Coupon": 7.0,
     "Effective Duration": 2.92,
     "Weighted Avg Maturity": 3.76,
-    "Option Adjusted Spread": 300.38,
-    "Detail": null
+    "Option Adjusted Spread": 300.38
   },
   {
     "Ticker": "IGEB",
@@ -557,8 +507,7 @@
     "Weighted Avg Coupon": 5.01,
     "Effective Duration": 6.32,
     "Weighted Avg Maturity": 9.03,
-    "Option Adjusted Spread": 98.12,
-    "Detail": null
+    "Option Adjusted Spread": 98.12
   },
   {
     "Ticker": "IBDX",
@@ -568,8 +517,7 @@
     "Weighted Avg Coupon": 4.9,
     "Effective Duration": 5.68,
     "Weighted Avg Maturity": 6.67,
-    "Option Adjusted Spread": 76.82,
-    "Detail": null
+    "Option Adjusted Spread": 76.82
   },
   {
     "Ticker": "TLTW",
@@ -579,8 +527,7 @@
     "Weighted Avg Coupon": 12.15,
     "Effective Duration": 15.33,
     "Weighted Avg Maturity": 25.53,
-    "Option Adjusted Spread": null,
-    "Detail": null
+    "Option Adjusted Spread": NaN
   },
   {
     "Ticker": "MEAR",
@@ -590,8 +537,7 @@
     "Weighted Avg Coupon": 0.25,
     "Effective Duration": 1.25,
     "Weighted Avg Maturity": 1.39,
-    "Option Adjusted Spread": 56.65,
-    "Detail": null
+    "Option Adjusted Spread": 56.65
   },
   {
     "Ticker": "SUSC",
@@ -601,8 +547,7 @@
     "Weighted Avg Coupon": 4.35,
     "Effective Duration": 6.68,
     "Weighted Avg Maturity": 10.31,
-    "Option Adjusted Spread": 72.53,
-    "Detail": null
+    "Option Adjusted Spread": 72.53
   },
   {
     "Ticker": "IGOV",
@@ -612,8 +557,7 @@
     "Weighted Avg Coupon": 0.54,
     "Effective Duration": 7.67,
     "Weighted Avg Maturity": 9.57,
-    "Option Adjusted Spread": 18.28,
-    "Detail": null
+    "Option Adjusted Spread": 18.28
   },
   {
     "Ticker": "IBTI",
@@ -623,8 +567,7 @@
     "Weighted Avg Coupon": 3.88,
     "Effective Duration": 2.67,
     "Weighted Avg Maturity": 2.82,
-    "Option Adjusted Spread": 0.57,
-    "Detail": null
+    "Option Adjusted Spread": 0.57
   },
   {
     "Ticker": "CLOA",
@@ -634,8 +577,7 @@
     "Weighted Avg Coupon": 5.69,
     "Effective Duration": 0.19,
     "Weighted Avg Maturity": 3.46,
-    "Option Adjusted Spread": 104.51,
-    "Detail": null
+    "Option Adjusted Spread": 104.51
   },
   {
     "Ticker": "SUSB",
@@ -645,8 +587,7 @@
     "Weighted Avg Coupon": 4.22,
     "Effective Duration": 2.68,
     "Weighted Avg Maturity": 2.94,
-    "Option Adjusted Spread": 53.95,
-    "Detail": null
+    "Option Adjusted Spread": 53.95
   },
   {
     "Ticker": "IBHF",
@@ -656,8 +597,7 @@
     "Weighted Avg Coupon": 6.76,
     "Effective Duration": 0.68,
     "Weighted Avg Maturity": 0.81,
-    "Option Adjusted Spread": 312.39,
-    "Detail": null
+    "Option Adjusted Spread": 312.39
   },
   {
     "Ticker": "NYF",
@@ -667,8 +607,7 @@
     "Weighted Avg Coupon": 0.09,
     "Effective Duration": 7.27,
     "Weighted Avg Maturity": 8.07,
-    "Option Adjusted Spread": 35.98,
-    "Detail": null
+    "Option Adjusted Spread": 35.98
   },
   {
     "Ticker": "IBDY",
@@ -678,8 +617,7 @@
     "Weighted Avg Coupon": 4.93,
     "Effective Duration": 6.22,
     "Weighted Avg Maturity": 7.59,
-    "Option Adjusted Spread": 80.44,
-    "Detail": null
+    "Option Adjusted Spread": 80.44
   },
   {
     "Ticker": "EUSB",
@@ -689,8 +627,7 @@
     "Weighted Avg Coupon": 3.79,
     "Effective Duration": 5.49,
     "Weighted Avg Maturity": 7.45,
-    "Option Adjusted Spread": 42.69,
-    "Detail": null
+    "Option Adjusted Spread": 42.69
   },
   {
     "Ticker": "IBTJ",
@@ -700,8 +637,7 @@
     "Weighted Avg Coupon": 3.84,
     "Effective Duration": 3.54,
     "Weighted Avg Maturity": 3.84,
-    "Option Adjusted Spread": 0.02,
-    "Detail": null
+    "Option Adjusted Spread": 0.02
   },
   {
     "Ticker": "ISHG",
@@ -711,8 +647,7 @@
     "Weighted Avg Coupon": 2.28,
     "Effective Duration": 1.9,
     "Weighted Avg Maturity": 1.95,
-    "Option Adjusted Spread": 5.68,
-    "Detail": null
+    "Option Adjusted Spread": 5.68
   },
   {
     "Ticker": "AGZ",
@@ -722,8 +657,7 @@
     "Weighted Avg Coupon": 3.69,
     "Effective Duration": 3.18,
     "Weighted Avg Maturity": 4.07,
-    "Option Adjusted Spread": 11.13,
-    "Detail": null
+    "Option Adjusted Spread": 11.13
   },
   {
     "Ticker": "ILTB",
@@ -733,8 +667,7 @@
     "Weighted Avg Coupon": 4.88,
     "Effective Duration": 12.79,
     "Weighted Avg Maturity": 21.84,
-    "Option Adjusted Spread": 60.98,
-    "Detail": null
+    "Option Adjusted Spread": 60.98
   },
   {
     "Ticker": "IBMP",
@@ -744,8 +677,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 1.59,
     "Weighted Avg Maturity": 1.67,
-    "Option Adjusted Spread": 12.07,
-    "Detail": null
+    "Option Adjusted Spread": 12.07
   },
   {
     "Ticker": "IBHE",
@@ -755,8 +687,7 @@
     "Weighted Avg Coupon": 5.77,
     "Effective Duration": 0.13,
     "Weighted Avg Maturity": 0.18,
-    "Option Adjusted Spread": 55.42,
-    "Detail": null
+    "Option Adjusted Spread": 55.42
   },
   {
     "Ticker": "IBMO",
@@ -766,8 +697,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 0.78,
     "Weighted Avg Maturity": 0.8,
-    "Option Adjusted Spread": 10.63,
-    "Detail": null
+    "Option Adjusted Spread": 10.63
   },
   {
     "Ticker": "LQDH",
@@ -777,8 +707,7 @@
     "Weighted Avg Coupon": 6.61,
     "Effective Duration": 0.05,
     "Weighted Avg Maturity": 14.17,
-    "Option Adjusted Spread": 72.34,
-    "Detail": null
+    "Option Adjusted Spread": 72.34
   },
   {
     "Ticker": "EMHY",
@@ -788,8 +717,7 @@
     "Weighted Avg Coupon": 6.97,
     "Effective Duration": 4.87,
     "Weighted Avg Maturity": 8.36,
-    "Option Adjusted Spread": 324.97,
-    "Detail": null
+    "Option Adjusted Spread": 324.97
   },
   {
     "Ticker": "IBTK",
@@ -799,8 +727,7 @@
     "Weighted Avg Coupon": 3.84,
     "Effective Duration": 4.39,
     "Weighted Avg Maturity": 4.81,
-    "Option Adjusted Spread": 1.26,
-    "Detail": null
+    "Option Adjusted Spread": 1.26
   },
   {
     "Ticker": "IBMQ",
@@ -810,8 +737,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 2.4,
     "Weighted Avg Maturity": 2.57,
-    "Option Adjusted Spread": 20.19,
-    "Detail": null
+    "Option Adjusted Spread": 20.19
   },
   {
     "Ticker": "CMBS",
@@ -821,8 +747,7 @@
     "Weighted Avg Coupon": 3.41,
     "Effective Duration": 3.9,
     "Weighted Avg Maturity": 4.37,
-    "Option Adjusted Spread": 73.0,
-    "Detail": null
+    "Option Adjusted Spread": 73.0
   },
   {
     "Ticker": "IBMN",
@@ -832,8 +757,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 0.08,
     "Weighted Avg Maturity": 0.08,
-    "Option Adjusted Spread": 6.11,
-    "Detail": null
+    "Option Adjusted Spread": 6.11
   },
   {
     "Ticker": "HYGH",
@@ -843,8 +767,7 @@
     "Weighted Avg Coupon": 7.25,
     "Effective Duration": 0.1,
     "Weighted Avg Maturity": 3.46,
-    "Option Adjusted Spread": 261.03,
-    "Detail": null
+    "Option Adjusted Spread": 261.03
   },
   {
     "Ticker": "BGRN",
@@ -854,8 +777,7 @@
     "Weighted Avg Coupon": 4.19,
     "Effective Duration": 4.84,
     "Weighted Avg Maturity": 7.0,
-    "Option Adjusted Spread": 58.27,
-    "Detail": null
+    "Option Adjusted Spread": 58.27
   },
   {
     "Ticker": "IBTL",
@@ -865,8 +787,7 @@
     "Weighted Avg Coupon": 3.99,
     "Effective Duration": 5.29,
     "Weighted Avg Maturity": 5.85,
-    "Option Adjusted Spread": 0.91,
-    "Detail": null
+    "Option Adjusted Spread": 0.91
   },
   {
     "Ticker": "IBDZ",
@@ -876,8 +797,7 @@
     "Weighted Avg Coupon": 4.88,
     "Effective Duration": 6.8,
     "Weighted Avg Maturity": 8.59,
-    "Option Adjusted Spread": 89.15,
-    "Detail": null
+    "Option Adjusted Spread": 89.15
   },
   {
     "Ticker": "CEMB",
@@ -887,8 +807,7 @@
     "Weighted Avg Coupon": 5.13,
     "Effective Duration": 4.34,
     "Weighted Avg Maturity": 6.75,
-    "Option Adjusted Spread": 175.55,
-    "Detail": null
+    "Option Adjusted Spread": 175.55
   },
   {
     "Ticker": "LEMB",
@@ -898,8 +817,7 @@
     "Weighted Avg Coupon": 0.0,
     "Effective Duration": 5.28,
     "Weighted Avg Maturity": 7.63,
-    "Option Adjusted Spread": 50.42,
-    "Detail": null
+    "Option Adjusted Spread": 50.42
   },
   {
     "Ticker": "IBTO",
@@ -909,8 +827,7 @@
     "Weighted Avg Coupon": 4.1,
     "Effective Duration": 6.63,
     "Weighted Avg Maturity": 7.9,
-    "Option Adjusted Spread": 0.78,
-    "Detail": null
+    "Option Adjusted Spread": 0.78
   },
   {
     "Ticker": "SHYM",
@@ -920,8 +837,7 @@
     "Weighted Avg Coupon": 4.51,
     "Effective Duration": 4.74,
     "Weighted Avg Maturity": 6.41,
-    "Option Adjusted Spread": 186.37,
-    "Detail": null
+    "Option Adjusted Spread": 186.37
   },
   {
     "Ticker": "GNMA",
@@ -931,8 +847,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 5.53,
     "Weighted Avg Maturity": 6.54,
-    "Option Adjusted Spread": 54.23,
-    "Detail": null
+    "Option Adjusted Spread": 54.23
   },
   {
     "Ticker": "IBHG",
@@ -942,8 +857,7 @@
     "Weighted Avg Coupon": 6.64,
     "Effective Duration": 1.02,
     "Weighted Avg Maturity": 1.43,
-    "Option Adjusted Spread": 189.75,
-    "Detail": null
+    "Option Adjusted Spread": 189.75
   },
   {
     "Ticker": "IBTM",
@@ -953,8 +867,7 @@
     "Weighted Avg Coupon": 3.87,
     "Effective Duration": 5.92,
     "Weighted Avg Maturity": 6.78,
-    "Option Adjusted Spread": 0.58,
-    "Detail": null
+    "Option Adjusted Spread": 0.58
   },
   {
     "Ticker": "HYBB",
@@ -964,8 +877,7 @@
     "Weighted Avg Coupon": 6.35,
     "Effective Duration": 3.18,
     "Weighted Avg Maturity": 4.17,
-    "Option Adjusted Spread": 179.3,
-    "Detail": null
+    "Option Adjusted Spread": 179.3
   },
   {
     "Ticker": "IBHH",
@@ -975,8 +887,7 @@
     "Weighted Avg Coupon": 6.67,
     "Effective Duration": 1.62,
     "Weighted Avg Maturity": 2.19,
-    "Option Adjusted Spread": 229.97,
-    "Detail": null
+    "Option Adjusted Spread": 229.97
   },
   {
     "Ticker": "IBMR",
@@ -986,8 +897,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 3.37,
     "Weighted Avg Maturity": 3.63,
-    "Option Adjusted Spread": 23.42,
-    "Detail": null
+    "Option Adjusted Spread": 23.42
   },
   {
     "Ticker": "GOVZ",
@@ -997,8 +907,7 @@
     "Weighted Avg Coupon": 0.15,
     "Effective Duration": 26.63,
     "Weighted Avg Maturity": 27.29,
-    "Option Adjusted Spread": 7.37,
-    "Detail": null
+    "Option Adjusted Spread": 7.37
   },
   {
     "Ticker": "LQDW",
@@ -1008,8 +917,7 @@
     "Weighted Avg Coupon": 14.96,
     "Effective Duration": 7.95,
     "Weighted Avg Maturity": 12.67,
-    "Option Adjusted Spread": null,
-    "Detail": null
+    "Option Adjusted Spread": NaN
   },
   {
     "Ticker": "BRTR",
@@ -1019,8 +927,7 @@
     "Weighted Avg Coupon": 0.4,
     "Effective Duration": 5.98,
     "Weighted Avg Maturity": 8.24,
-    "Option Adjusted Spread": 121.66,
-    "Detail": null
+    "Option Adjusted Spread": 121.66
   },
   {
     "Ticker": "IMTB",
@@ -1030,8 +937,7 @@
     "Weighted Avg Coupon": 0.06,
     "Effective Duration": 5.87,
     "Weighted Avg Maturity": 7.21,
-    "Option Adjusted Spread": 55.5,
-    "Detail": null
+    "Option Adjusted Spread": 55.5
   },
   {
     "Ticker": "BYLD",
@@ -1041,8 +947,7 @@
     "Weighted Avg Coupon": 0.28,
     "Effective Duration": 4.81,
     "Weighted Avg Maturity": 7.31,
-    "Option Adjusted Spread": 135.32,
-    "Detail": null
+    "Option Adjusted Spread": 135.32
   },
   {
     "Ticker": "HYGW",
@@ -1052,8 +957,7 @@
     "Weighted Avg Coupon": 11.86,
     "Effective Duration": 2.84,
     "Weighted Avg Maturity": 3.54,
-    "Option Adjusted Spread": null,
-    "Detail": null
+    "Option Adjusted Spread": NaN
   },
   {
     "Ticker": "IBHI",
@@ -1063,8 +967,7 @@
     "Weighted Avg Coupon": 6.9,
     "Effective Duration": 2.51,
     "Weighted Avg Maturity": 3.2,
-    "Option Adjusted Spread": 295.71,
-    "Detail": null
+    "Option Adjusted Spread": 295.71
   },
   {
     "Ticker": "HYXF",
@@ -1074,8 +977,7 @@
     "Weighted Avg Coupon": 6.34,
     "Effective Duration": 2.95,
     "Weighted Avg Maturity": 3.68,
-    "Option Adjusted Spread": 212.41,
-    "Detail": null
+    "Option Adjusted Spread": 212.41
   },
   {
     "Ticker": "GHYG",
@@ -1085,8 +987,7 @@
     "Weighted Avg Coupon": 5.96,
     "Effective Duration": 2.86,
     "Weighted Avg Maturity": 3.47,
-    "Option Adjusted Spread": 271.83,
-    "Detail": null
+    "Option Adjusted Spread": 271.83
   },
   {
     "Ticker": "IBTP",
@@ -1096,8 +997,7 @@
     "Weighted Avg Coupon": 3.74,
     "Effective Duration": 7.24,
     "Weighted Avg Maturity": 8.87,
-    "Option Adjusted Spread": 2.47,
-    "Detail": null
+    "Option Adjusted Spread": 2.47
   },
   {
     "Ticker": "CALI",
@@ -1107,8 +1007,7 @@
     "Weighted Avg Coupon": 2.79,
     "Effective Duration": 1.14,
     "Weighted Avg Maturity": 1.23,
-    "Option Adjusted Spread": 23.31,
-    "Detail": null
+    "Option Adjusted Spread": 23.31
   },
   {
     "Ticker": "GBF",
@@ -1118,8 +1017,7 @@
     "Weighted Avg Coupon": 3.85,
     "Effective Duration": 5.94,
     "Weighted Avg Maturity": 8.44,
-    "Option Adjusted Spread": 25.76,
-    "Detail": null
+    "Option Adjusted Spread": 25.76
   },
   {
     "Ticker": "CSHP",
@@ -1129,8 +1027,7 @@
     "Weighted Avg Coupon": 5.16,
     "Effective Duration": 0.03,
     "Weighted Avg Maturity": 0.06,
-    "Option Adjusted Spread": 7.99,
-    "Detail": null
+    "Option Adjusted Spread": 7.99
   },
   {
     "Ticker": "INMU",
@@ -1140,8 +1037,7 @@
     "Weighted Avg Coupon": 3.5,
     "Effective Duration": 5.93,
     "Weighted Avg Maturity": 5.9,
-    "Option Adjusted Spread": 96.11,
-    "Detail": null
+    "Option Adjusted Spread": 96.11
   },
   {
     "Ticker": "IGBH",
@@ -1151,8 +1047,7 @@
     "Weighted Avg Coupon": 6.49,
     "Effective Duration": 0.06,
     "Weighted Avg Maturity": 23.39,
-    "Option Adjusted Spread": 83.89,
-    "Detail": null
+    "Option Adjusted Spread": 83.89
   },
   {
     "Ticker": "IBMS",
@@ -1162,8 +1057,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 4.38,
     "Weighted Avg Maturity": 4.72,
-    "Option Adjusted Spread": 28.87,
-    "Detail": null
+    "Option Adjusted Spread": 28.87
   },
   {
     "Ticker": "LQDI",
@@ -1173,8 +1067,7 @@
     "Weighted Avg Coupon": 4.46,
     "Effective Duration": 7.61,
     "Weighted Avg Maturity": 12.36,
-    "Option Adjusted Spread": 71.64,
-    "Detail": null
+    "Option Adjusted Spread": 71.64
   },
   {
     "Ticker": "IBIE",
@@ -1184,8 +1077,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 2.65,
     "Weighted Avg Maturity": 2.75,
-    "Option Adjusted Spread": 1.67,
-    "Detail": null
+    "Option Adjusted Spread": 1.67
   },
   {
     "Ticker": "FIBR",
@@ -1195,8 +1087,7 @@
     "Weighted Avg Coupon": 5.16,
     "Effective Duration": 2.93,
     "Weighted Avg Maturity": 6.06,
-    "Option Adjusted Spread": 117.23,
-    "Detail": null
+    "Option Adjusted Spread": 117.23
   },
   {
     "Ticker": "IBCA",
@@ -1206,8 +1097,7 @@
     "Weighted Avg Coupon": 5.13,
     "Effective Duration": 7.39,
     "Weighted Avg Maturity": 9.53,
-    "Option Adjusted Spread": 86.66,
-    "Detail": null
+    "Option Adjusted Spread": 86.66
   },
   {
     "Ticker": "IBIG",
@@ -1217,8 +1107,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 4.51,
     "Weighted Avg Maturity": 4.67,
-    "Option Adjusted Spread": 1.97,
-    "Detail": null
+    "Option Adjusted Spread": 1.97
   },
   {
     "Ticker": "IBIK",
@@ -1228,8 +1117,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 7.89,
     "Weighted Avg Maturity": 8.67,
-    "Option Adjusted Spread": 1.85,
-    "Detail": null
+    "Option Adjusted Spread": 1.85
   },
   {
     "Ticker": "IBHJ",
@@ -1239,8 +1127,7 @@
     "Weighted Avg Coupon": 6.7,
     "Effective Duration": 3.01,
     "Weighted Avg Maturity": 3.74,
-    "Option Adjusted Spread": 275.16,
-    "Detail": null
+    "Option Adjusted Spread": 275.16
   },
   {
     "Ticker": "IBGA",
@@ -1250,8 +1137,7 @@
     "Weighted Avg Coupon": 4.38,
     "Effective Duration": 12.33,
     "Weighted Avg Maturity": 18.85,
-    "Option Adjusted Spread": 0.42,
-    "Detail": null
+    "Option Adjusted Spread": 0.42
   },
   {
     "Ticker": "HYXU",
@@ -1261,8 +1147,7 @@
     "Weighted Avg Coupon": 4.38,
     "Effective Duration": 2.91,
     "Weighted Avg Maturity": 3.22,
-    "Option Adjusted Spread": 236.71,
-    "Detail": null
+    "Option Adjusted Spread": 236.71
   },
   {
     "Ticker": "BCLO",
@@ -1272,8 +1157,7 @@
     "Weighted Avg Coupon": 7.64,
     "Effective Duration": 0.2,
     "Weighted Avg Maturity": 4.49,
-    "Option Adjusted Spread": 289.49,
-    "Detail": null
+    "Option Adjusted Spread": 289.49
   },
   {
     "Ticker": "BRHY",
@@ -1283,8 +1167,7 @@
     "Weighted Avg Coupon": 0.45,
     "Effective Duration": 2.96,
     "Weighted Avg Maturity": 4.35,
-    "Option Adjusted Spread": 282.21,
-    "Detail": null
+    "Option Adjusted Spread": 282.21
   },
   {
     "Ticker": "BRLN",
@@ -1294,8 +1177,7 @@
     "Weighted Avg Coupon": 0.6,
     "Effective Duration": 0.22,
     "Weighted Avg Maturity": 4.24,
-    "Option Adjusted Spread": 286.79,
-    "Detail": null
+    "Option Adjusted Spread": 286.79
   },
   {
     "Ticker": "IBIC",
@@ -1305,8 +1187,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 0.76,
     "Weighted Avg Maturity": 0.77,
-    "Option Adjusted Spread": 57.99,
-    "Detail": null
+    "Option Adjusted Spread": 57.99
   },
   {
     "Ticker": "IBID",
@@ -1316,8 +1197,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 1.73,
     "Weighted Avg Maturity": 1.77,
-    "Option Adjusted Spread": 21.81,
-    "Detail": null
+    "Option Adjusted Spread": 21.81
   },
   {
     "Ticker": "BEMB",
@@ -1327,8 +1207,7 @@
     "Weighted Avg Coupon": 6.24,
     "Effective Duration": 5.67,
     "Weighted Avg Maturity": 8.72,
-    "Option Adjusted Spread": 186.33,
-    "Detail": null
+    "Option Adjusted Spread": 186.33
   },
   {
     "Ticker": "LQDB",
@@ -1338,8 +1217,7 @@
     "Weighted Avg Coupon": 4.54,
     "Effective Duration": 6.21,
     "Weighted Avg Maturity": 9.56,
-    "Option Adjusted Spread": 79.66,
-    "Detail": null
+    "Option Adjusted Spread": 79.66
   },
   {
     "Ticker": "GGOV",
@@ -1349,8 +1227,7 @@
     "Weighted Avg Coupon": 0.39,
     "Effective Duration": 5.79,
     "Weighted Avg Maturity": 8.54,
-    "Option Adjusted Spread": 10.4,
-    "Detail": null
+    "Option Adjusted Spread": 10.4
   },
   {
     "Ticker": "IBIF",
@@ -1360,8 +1237,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 3.59,
     "Weighted Avg Maturity": 3.77,
-    "Option Adjusted Spread": 4.88,
-    "Detail": null
+    "Option Adjusted Spread": 4.88
   },
   {
     "Ticker": "IBTQ",
@@ -1371,8 +1247,7 @@
     "Weighted Avg Coupon": 4.27,
     "Effective Duration": 7.64,
     "Weighted Avg Maturity": 9.62,
-    "Option Adjusted Spread": 2.91,
-    "Detail": null
+    "Option Adjusted Spread": 2.91
   },
   {
     "Ticker": "IBIB",
@@ -1382,8 +1257,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 0.17,
     "Weighted Avg Maturity": 0.17,
-    "Option Adjusted Spread": 4.65,
-    "Detail": null
+    "Option Adjusted Spread": 4.65
   },
   {
     "Ticker": "IBIH",
@@ -1393,8 +1267,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 5.54,
     "Weighted Avg Maturity": 5.67,
-    "Option Adjusted Spread": 3.37,
-    "Detail": null
+    "Option Adjusted Spread": 3.37
   },
   {
     "Ticker": "IBIJ",
@@ -1404,8 +1277,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 7.17,
     "Weighted Avg Maturity": 7.67,
-    "Option Adjusted Spread": 1.45,
-    "Detail": null
+    "Option Adjusted Spread": 1.45
   },
   {
     "Ticker": "IBHK",
@@ -1415,8 +1287,7 @@
     "Weighted Avg Coupon": 6.58,
     "Effective Duration": 3.61,
     "Weighted Avg Maturity": 4.43,
-    "Option Adjusted Spread": 258.55,
-    "Detail": null
+    "Option Adjusted Spread": 258.55
   },
   {
     "Ticker": "LMUB",
@@ -1426,8 +1297,7 @@
     "Weighted Avg Coupon": 0.09,
     "Effective Duration": 11.33,
     "Weighted Avg Maturity": 12.7,
-    "Option Adjusted Spread": 37.7,
-    "Detail": null
+    "Option Adjusted Spread": 37.7
   },
   {
     "Ticker": "IBII",
@@ -1437,8 +1307,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 6.41,
     "Weighted Avg Maturity": 6.67,
-    "Option Adjusted Spread": 4.61,
-    "Detail": null
+    "Option Adjusted Spread": 4.61
   },
   {
     "Ticker": "LDRT",
@@ -1448,8 +1317,7 @@
     "Weighted Avg Coupon": 3.81,
     "Effective Duration": 2.64,
     "Weighted Avg Maturity": 2.84,
-    "Option Adjusted Spread": 0.64,
-    "Detail": null
+    "Option Adjusted Spread": 0.64
   },
   {
     "Ticker": "ELQD",
@@ -1459,8 +1327,7 @@
     "Weighted Avg Coupon": 4.19,
     "Effective Duration": 0.0,
     "Weighted Avg Maturity": 0.0,
-    "Option Adjusted Spread": 0.02,
-    "Detail": null
+    "Option Adjusted Spread": 0.02
   },
   {
     "Ticker": "IBMT",
@@ -1470,8 +1337,7 @@
     "Weighted Avg Coupon": 0.18,
     "Effective Duration": 5.24,
     "Weighted Avg Maturity": 5.74,
-    "Option Adjusted Spread": 29.62,
-    "Detail": null
+    "Option Adjusted Spread": 29.62
   },
   {
     "Ticker": "LDRC",
@@ -1481,8 +1347,7 @@
     "Weighted Avg Coupon": 4.35,
     "Effective Duration": 2.51,
     "Weighted Avg Maturity": 2.75,
-    "Option Adjusted Spread": 50.59,
-    "Detail": null
+    "Option Adjusted Spread": 50.59
   },
   {
     "Ticker": "IBHL",
@@ -1492,8 +1357,7 @@
     "Weighted Avg Coupon": 6.46,
     "Effective Duration": 3.94,
     "Weighted Avg Maturity": 4.66,
-    "Option Adjusted Spread": 227.29,
-    "Detail": null
+    "Option Adjusted Spread": 227.29
   },
   {
     "Ticker": "LDRI",
@@ -1503,8 +1367,7 @@
     "Weighted Avg Coupon": 0.0,
     "Effective Duration": 2.65,
     "Weighted Avg Maturity": 2.75,
-    "Option Adjusted Spread": 14.85,
-    "Detail": null
+    "Option Adjusted Spread": 14.85
   },
   {
     "Ticker": "AGRH",
@@ -1514,8 +1377,7 @@
     "Weighted Avg Coupon": 4.85,
     "Effective Duration": 0.08,
     "Weighted Avg Maturity": 8.06,
-    "Option Adjusted Spread": 29.45,
-    "Detail": null
+    "Option Adjusted Spread": 29.45
   },
   {
     "Ticker": "IBIL",
@@ -1525,8 +1387,7 @@
     "Weighted Avg Coupon": 0.1,
     "Effective Duration": 8.53,
     "Weighted Avg Maturity": 9.55,
-    "Option Adjusted Spread": 3.79,
-    "Detail": null
+    "Option Adjusted Spread": 3.79
   },
   {
     "Ticker": "HYGI",
@@ -1536,8 +1397,7 @@
     "Weighted Avg Coupon": 5.92,
     "Effective Duration": 0.08,
     "Weighted Avg Maturity": 0.24,
-    "Option Adjusted Spread": 1.16,
-    "Detail": null
+    "Option Adjusted Spread": 1.16
   },
   {
     "Ticker": "IBGB",
@@ -1547,8 +1407,7 @@
     "Weighted Avg Coupon": 4.89,
     "Effective Duration": 13.0,
     "Weighted Avg Maturity": 19.77,
-    "Option Adjusted Spread": 2.44,
-    "Detail": null
+    "Option Adjusted Spread": 2.44
   },
   {
     "Ticker": "LDRH",
@@ -1558,8 +1417,7 @@
     "Weighted Avg Coupon": 6.68,
     "Effective Duration": 1.76,
     "Weighted Avg Maturity": 2.27,
-    "Option Adjusted Spread": 260.43,
-    "Detail": null
+    "Option Adjusted Spread": 260.43
   },
   {
     "Ticker": "IBGL",
@@ -1569,8 +1427,7 @@
     "Weighted Avg Coupon": 4.88,
     "Effective Duration": 15.05,
     "Weighted Avg Maturity": 29.62,
-    "Option Adjusted Spread": 1.02,
-    "Detail": null
+    "Option Adjusted Spread": 1.02
   },
   {
     "Ticker": "AGIH",
@@ -1580,8 +1437,7 @@
     "Weighted Avg Coupon": 3.71,
     "Effective Duration": 0.08,
     "Weighted Avg Maturity": 0.24,
-    "Option Adjusted Spread": 1.18,
-    "Detail": null
+    "Option Adjusted Spread": 1.18
   },
   {
     "Ticker": "IBGK",
@@ -1591,7 +1447,6 @@
     "Weighted Avg Coupon": 4.71,
     "Effective Duration": 15.08,
     "Weighted Avg Maturity": 28.88,
-    "Option Adjusted Spread": 0.43,
-    "Detail": null
+    "Option Adjusted Spread": 0.43
   }
 ]
