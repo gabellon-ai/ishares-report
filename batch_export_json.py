@@ -1,59 +1,54 @@
-# batch_export_json.py
-# Convert the latest CSV from the scraper into public/funds.json (all rows)
-import json, pathlib, re, os
+#!/usr/bin/env python3
+from pathlib import Path
+import json
 import pandas as pd
+import sys
 
-ROOT = pathlib.Path(__file__).parent
-PUBLIC = ROOT / "public"
-PUBLIC.mkdir(exist_ok=True)
+# Always work relative to this file, not the runner's CWD
+ROOT = Path(__file__).resolve().parent
+DATA_DIR = ROOT / "data"
+PUBLIC_DIR = ROOT / "public"
+PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
 
-def latest_metrics_csv():
-    files = sorted(
-        ROOT.glob("ishares_fixed_income_metrics_*.csv"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
-    if not files:
-        raise SystemExit("No metrics CSV found. Make sure the scraper step ran.")
-    return files[0]
+print(f"[export] ROOT     : {ROOT}")
+print(f"[export] DATA_DIR : {DATA_DIR}")
+print(f"[export] PUBLIC   : {PUBLIC_DIR}")
 
-_num_tail = re.compile(r"\s*(%|bps?|yrs?)\s*$", re.I)
-def to_number(v):
-    if pd.isna(v): return None
-    t = str(v).strip().replace("$", "").replace(",", "")
-    t = _num_tail.sub("", t)
-    try:
-        return float(t)
-    except Exception:
-        return None
+# Find the newest metrics CSV produced by the scraper
+csvs = sorted(DATA_DIR.glob("ishares_fixed_income_metrics_*.csv"))
+if not csvs:
+    listing = [p.name for p in DATA_DIR.glob("*")]
+    print(f"[export] No metrics CSV found in {DATA_DIR}. Listing: {listing}")
+    sys.exit(1)
 
-def main(limit=None):
-    csv_path = latest_metrics_csv()
-    df = pd.read_csv(csv_path)
+latest = csvs[-1]
+print(f"[export] Using CSV : {latest.name}")
 
-    rows = []
-    for _, r in df.iterrows():
-        rows.append({
-            "Ticker": r.get("Ticker"),
-            "Fund Name": r.get("Fund Name"),
-            "Closing Price": to_number(r.get("Closing Price")),
-            "Average Yield to Maturity": to_number(r.get("Average Yield to Maturity")),
-            "Weighted Avg Coupon": to_number(r.get("Weighted Avg Coupon")),
-            "Effective Duration": to_number(r.get("Effective Duration")),
-            "Weighted Avg Maturity": to_number(r.get("Weighted Avg Maturity")),
-            "Option Adjusted Spread": to_number(r.get("Option Adjusted Spread")),
-            "Detail": r.get("Detail URL") or r.get("Detail") or None,
-        })
+# Load and select columns
+keep_cols = [
+    "Ticker",
+    "Fund Name",
+    "Closing Price",
+    "Average Yield to Maturity",
+    "Weighted Avg Coupon",
+    "Effective Duration",
+    "Weighted Avg Maturity",
+    "Option Adjusted Spread",
+    "Detail URL",
+]
+df = pd.read_csv(latest)
 
-    if limit:
-        rows = rows[:limit]
+missing = [c for c in keep_cols if c not in df.columns]
+if missing:
+    print(f"[export] Missing columns (ok, will drop): {missing}")
+use_cols = [c for c in keep_cols if c in df.columns]
 
-    out = PUBLIC / "funds.json"
-    out.write_text(json.dumps(rows, indent=2), encoding="utf-8")
-    print(f"Wrote {len(rows)} rows -> {out}")
-
-if __name__ == "__main__":
-    # Optional: MAX_FUNDS=100 to cap during testing; unset for all.
-    lim = os.getenv("MAX_FUNDS")
-    lim = int(lim) if (lim and lim.isdigit()) else None
-    main(limit=lim)
+# Write public/funds.json (rename detail key to 'Detail' for the UI)
+records = (
+    df[use_cols]
+    .rename(columns={"Detail URL": "Detail"})
+    .to_dict(orient="records")
+)
+out_path = PUBLIC_DIR / "funds.json"
+out_path.write_text(json.dumps(records, indent=2), encoding="utf-8")
+print(f"[export] Wrote {len(records)} rows -> {out_path}")
