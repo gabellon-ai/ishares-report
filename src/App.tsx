@@ -1,5 +1,5 @@
 // src/App.tsx
-// Vite + React + shadcn/ui + recharts — reads data from /funds.json
+// Renders the dashboard, loads data from /funds.json and shows "last updated" from /last_updated.json.
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -215,6 +215,13 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // New: last-updated metadata
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const updatedAtLocal = useMemo(
+    () => (updatedAt ? new Date(updatedAt).toLocaleString() : null),
+    [updatedAt]
+  );
+
   // Filters
   const [q, setQ] = useState("");
   const [ytmMin, setYtmMin] = useState<number | undefined>();
@@ -246,9 +253,10 @@ const App: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Build URL that works on Vercel/Pages/local without using new URL()
-        const base = (import.meta.env.BASE_URL ?? "/");
-        const jsonUrl = `${base.replace(/\/$/, "")}/funds.json?ts=${Date.now()}`;
+        // Build a robust URL that works on Vercel and locally
+        const jsonUrl =
+          new URL("funds.json", import.meta.env.BASE_URL).toString() +
+          `?ts=${Date.now()}`;
 
         const res = await fetch(jsonUrl, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${res.url}`);
@@ -265,10 +273,30 @@ const App: React.FC = () => {
           "Effective Duration": parseNum(r["Effective Duration"]),
           "Weighted Avg Maturity": parseNum(r["Weighted Avg Maturity"]),
           "Option Adjusted Spread": parseNum(r["Option Adjusted Spread"]),
+          // Map Detail URL -> Detail so the "View" link renders
           Detail: r["Detail URL"] ?? r["Detail"],
         }));
 
         setFunds(parsed);
+
+        // Try to fetch timestamp metadata
+        try {
+          const metaUrl =
+            new URL("last_updated.json", import.meta.env.BASE_URL).toString() +
+            `?ts=${Date.now()}`;
+          const mres = await fetch(metaUrl, { cache: "no-store" });
+          if (mres.ok) {
+            const meta = await mres.json();
+            setUpdatedAt(meta.updated_at || meta.updatedAt || null);
+          } else {
+            // fallback to Last-Modified of funds.json
+            const lm = res.headers.get("last-modified");
+            if (lm) setUpdatedAt(new Date(lm).toISOString());
+          }
+        } catch {
+          const lm = res.headers.get("last-modified");
+          if (lm) setUpdatedAt(new Date(lm).toISOString());
+        }
       } catch (e: any) {
         console.error(e);
         setError(e?.message || "Failed to load funds.json");
@@ -303,7 +331,7 @@ const App: React.FC = () => {
 
   const ytmMinBound = ytmVals.length
     ? Math.floor(Math.min(...ytmVals) * 4) / 4
-    : 0;
+    : 0; // round .25
   const ytmMaxBound = ytmVals.length
     ? Math.ceil(Math.max(...ytmVals) * 4) / 4
     : 10;
@@ -311,11 +339,12 @@ const App: React.FC = () => {
   const durMaxBound = durVals.length ? Math.ceil(Math.max(...durVals)) : 30;
   const oasMinBound = oasVals.length
     ? Math.floor(Math.min(...oasVals) / 5) * 5
-    : 0;
+    : 0; // nearest 5
   const oasMaxBound = oasVals.length
     ? Math.ceil(Math.max(...oasVals) / 5) * 5
     : 500;
 
+  // Set defaults once data is available
   useEffect(() => {
     if (!funds.length) return;
     if (ytmMin === undefined) setYtmMin(ytmMinBound);
@@ -327,7 +356,7 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [funds]);
 
-  const hasBounds = ytmVals.length > 0;
+  const hasBounds = ytmVals.length > 0; // to disable inputs during first load
 
   /* ----------------------- Filter + sort ----------------------- */
   const filteredFunds = useMemo(() => {
@@ -520,7 +549,13 @@ const App: React.FC = () => {
 
   if (error) {
     return (
-      <div style={{ padding: 16, fontFamily: "system-ui", color: "#b91c1c" }}>
+      <div
+        style={{
+          padding: 16,
+          fontFamily: "system-ui",
+          color: "#b91c1c",
+        }}
+      >
         <h1>Load error</h1>
         <p>{error}</p>
         <p>Ensure <code>public/funds.json</code> exists in the deployed build.</p>
@@ -528,7 +563,9 @@ const App: React.FC = () => {
     );
   }
   if (loading) {
-    return <div style={{ padding: 16, fontFamily: "system-ui" }}>Loading…</div>;
+    return (
+      <div style={{ padding: 16, fontFamily: "system-ui" }}>Loading…</div>
+    );
   }
 
   return (
@@ -545,6 +582,11 @@ const App: React.FC = () => {
                 Explore fixed income ETFs: search, filter, visualise and export
                 the data scraped from iShares.
               </p>
+              {updatedAtLocal && (
+                <div className="text-white/80 text-xs mt-1">
+                  Last updated: {updatedAtLocal}
+                </div>
+              )}
             </div>
             <ThemeToggle />
           </CardHeader>
@@ -624,8 +666,7 @@ const App: React.FC = () => {
                   min={ytmMinBound}
                   max={ytmMaxBound}
                   step={0.25}
-                  onValueChange={(vals: number[]) => {
-                    const [lo, hi] = vals;
+                  onValueChange={([lo, hi]) => {
                     setYtmMin(lo);
                     setYtmMax(hi);
                   }}
@@ -667,8 +708,7 @@ const App: React.FC = () => {
                   min={durMinBound}
                   max={durMaxBound}
                   step={0.5}
-                  onValueChange={(vals: number[]) => {
-                    const [lo, hi] = vals;
+                  onValueChange={([lo, hi]) => {
                     setDurMin(lo);
                     setDurMax(hi);
                   }}
@@ -710,8 +750,7 @@ const App: React.FC = () => {
                   min={oasMinBound}
                   max={oasMaxBound}
                   step={5}
-                  onValueChange={(vals: number[]) => {
-                    const [lo, hi] = vals;
+                  onValueChange={([lo, hi]) => {
                     setOasMin(lo);
                     setOasMax(hi);
                   }}
@@ -770,7 +809,9 @@ const App: React.FC = () => {
             <CardContent className="h-[360px]">
               {tab === "scatter" && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+                  <ScatterChart
+                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                  >
                     <CartesianGrid stroke={gridColor} />
                     <XAxis
                       dataKey="x"
@@ -832,7 +873,10 @@ const App: React.FC = () => {
 
               {tab === "ytm" && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <RBarChart data={ytmBins} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+                  <RBarChart
+                    data={ytmBins}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                  >
                     <CartesianGrid stroke={gridColor} />
                     <XAxis
                       dataKey="bucket"
@@ -861,7 +905,10 @@ const App: React.FC = () => {
 
               {tab === "duration" && (
                 <ResponsiveContainer width="100%" height="100%">
-                  <RBarChart data={durBins} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+                  <RBarChart
+                    data={durBins}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+                  >
                     <CartesianGrid stroke={gridColor} />
                     <XAxis
                       dataKey="bucket"
@@ -935,7 +982,10 @@ const App: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 {sortedFunds.map((f) => (
-                  <tr key={f.Ticker} className="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                  <tr
+                    key={f.Ticker}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-700/40"
+                  >
                     <td className="py-2 pr-4 whitespace-nowrap font-medium">
                       {f.Ticker}
                     </td>
@@ -947,7 +997,9 @@ const App: React.FC = () => {
                     <td className="py-2 pr-4">
                       {fmtPct(f["Weighted Avg Coupon"])}
                     </td>
-                    <td className="py-2 pr-4">{fmtYrs(f["Effective Duration"])}</td>
+                    <td className="py-2 pr-4">
+                      {fmtYrs(f["Effective Duration"])}
+                    </td>
                     <td className="py-2 pr-4">
                       {fmtYrs(f["Weighted Avg Maturity"])}
                     </td>
@@ -976,7 +1028,8 @@ const App: React.FC = () => {
         </Card>
 
         <div className="text-center text-xs text-slate-500 dark:text-slate-400 pb-6">
-          Data source: iShares (scraped). Visualization for internal analysis only.
+          Data source: iShares (scraped). Visualization for internal analysis
+          only.
         </div>
       </div>
     </div>
