@@ -1,5 +1,5 @@
 // src/App.tsx
-// Renders the dashboard, loads data from /funds.json and shows "last updated" from /last_updated.json.
+// Loads data from /funds.json and renders the full dashboard UI.
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -141,7 +141,7 @@ function NumberStepper({
     if (min !== undefined) n = Math.max(min, n);
     if (max !== undefined) n = Math.min(max, n);
     return Number.isFinite(n) ? Number(n.toFixed(2)) : n;
-  };
+    };
 
   const change = (delta: number) => {
     const base = value ?? (min ?? 0);
@@ -215,13 +215,6 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // New: last-updated metadata
-  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const updatedAtLocal = useMemo(
-    () => (updatedAt ? new Date(updatedAt).toLocaleString() : null),
-    [updatedAt]
-  );
-
   // Filters
   const [q, setQ] = useState("");
   const [ytmMin, setYtmMin] = useState<number | undefined>();
@@ -253,7 +246,7 @@ const App: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Build a robust URL that works on Vercel and locally
+        // Works both locally and on Vercel
         const jsonUrl =
           new URL("funds.json", import.meta.env.BASE_URL).toString() +
           `?ts=${Date.now()}`;
@@ -273,30 +266,10 @@ const App: React.FC = () => {
           "Effective Duration": parseNum(r["Effective Duration"]),
           "Weighted Avg Maturity": parseNum(r["Weighted Avg Maturity"]),
           "Option Adjusted Spread": parseNum(r["Option Adjusted Spread"]),
-          // Map Detail URL -> Detail so the "View" link renders
           Detail: r["Detail URL"] ?? r["Detail"],
         }));
 
         setFunds(parsed);
-
-        // Try to fetch timestamp metadata
-        try {
-          const metaUrl =
-            new URL("last_updated.json", import.meta.env.BASE_URL).toString() +
-            `?ts=${Date.now()}`;
-          const mres = await fetch(metaUrl, { cache: "no-store" });
-          if (mres.ok) {
-            const meta = await mres.json();
-            setUpdatedAt(meta.updated_at || meta.updatedAt || null);
-          } else {
-            // fallback to Last-Modified of funds.json
-            const lm = res.headers.get("last-modified");
-            if (lm) setUpdatedAt(new Date(lm).toISOString());
-          }
-        } catch {
-          const lm = res.headers.get("last-modified");
-          if (lm) setUpdatedAt(new Date(lm).toISOString());
-        }
       } catch (e: any) {
         console.error(e);
         setError(e?.message || "Failed to load funds.json");
@@ -356,7 +329,7 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [funds]);
 
-  const hasBounds = ytmVals.length > 0; // to disable inputs during first load
+  const hasBounds = ytmVals.length > 0;
 
   /* ----------------------- Filter + sort ----------------------- */
   const filteredFunds = useMemo(() => {
@@ -582,11 +555,6 @@ const App: React.FC = () => {
                 Explore fixed income ETFs: search, filter, visualise and export
                 the data scraped from iShares.
               </p>
-              {updatedAtLocal && (
-                <div className="text-white/80 text-xs mt-1">
-                  Last updated: {updatedAtLocal}
-                </div>
-              )}
             </div>
             <ThemeToggle />
           </CardHeader>
@@ -862,7 +830,7 @@ const App: React.FC = () => {
                           y: f["Average Yield to Maturity"]!,
                           z: f["Option Adjusted Spread"] ?? 0,
                           ticker: f.Ticker,
-                        }))}
+                        }))} 
                       fill={dotFill}
                       stroke={dotStroke}
                       opacity={0.9}
@@ -1034,6 +1002,10 @@ const App: React.FC = () => {
       </div>
     </div>
   );
+};
+
+export default App;
+
 };
 
 export default App;
