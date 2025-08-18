@@ -545,7 +545,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Header */}
-        <Card className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-2xl shadow-sm">
+       <Card className="bg-gradient-to-r from-sky-500 via-cyan-600 to-teal-600 text-white rounded-2xl shadow-sm">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <CardTitle className="text-3xl font-bold">
