@@ -1003,9 +1003,8 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;
-
-};
+<div style={{ marginTop: 16, color: "#777", fontSize: 12 }}>
+  Source: iShares (scraped). Build: 2025-08-09 13:58
+</div>
 
 export default App;
