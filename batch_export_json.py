@@ -1,75 +1,54 @@
-"""
-batch_export_json.py
+# batch_export_json.py
+# Reads the newest CSV from ./data and writes ./public/funds.json as a FLAT ARRAY.
 
-Reads the newest CSV from ./data named:
-  ishares_fixed_income_metrics_*.csv
-and writes:
-  ./public/funds.json
-  ./public/last_updated.json   <-- adds timestamp + row count
-"""
+import csv, json, sys, pathlib
 
-from __future__ import annotations
+METRICS_DIR = pathlib.Path("data")                 # where the scraper saves CSVs
+OUT_PATH    = pathlib.Path("public/funds.json")    # app reads this file
 
-import json
-from datetime import datetime, timezone
-from pathlib import Path
+def _num(s):
+    if s is None: return None
+    s = str(s).strip()
+    if s == "": return None
+    try: return float(s)
+    except: return None
 
-import pandas as pd
+def find_latest_csv():
+    # prefer ./data; fall back to repo root in case the CSV landed there
+    cands = sorted(METRICS_DIR.glob("ishares_fixed_income_metrics_*.csv"))
+    if not cands:
+        cands = sorted(pathlib.Path(".").glob("ishares_fixed_income_metrics_*.csv"))
+    return cands[-1] if cands else None
 
+def convert(csv_path: pathlib.Path):
+    rows = []
+    with csv_path.open("r", encoding="utf-8") as f:
+        r = csv.DictReader(f)
+        for rec in r:
+            rows.append({
+                "Ticker": rec.get("Ticker",""),
+                "Fund Name": rec.get("Fund Name",""),
+                "Closing Price": _num(rec.get("Closing Price")),
+                "Average Yield to Maturity": _num(rec.get("Average Yield to Maturity")),
+                "Weighted Avg Coupon": _num(rec.get("Weighted Avg Coupon")),
+                "Effective Duration": _num(rec.get("Effective Duration")),
+                "Weighted Avg Maturity": _num(rec.get("Weighted Avg Maturity")),
+                "Option Adjusted Spread": _num(rec.get("Option Adjusted Spread")),
+                "Detail": rec.get("Detail URL") or rec.get("Detail",""),
+            })
+    return rows
 
-ROOT = Path(__file__).resolve().parent
-DATA_DIR = ROOT / "data"
-PUBLIC_DIR = ROOT / "public"
-PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+def main():
+    csv_path = find_latest_csv()
+    if not csv_path:
+        print("No metrics CSV found. Make sure the scraper step ran.", file=sys.stderr)
+        sys.exit(1)
 
-KEEP_COLS = [
-    "Ticker",
-    "Fund Name",
-    "Closing Price",
-    "Average Yield to Maturity",
-    "Weighted Avg Coupon",
-    "Effective Duration",
-    "Weighted Avg Maturity",
-    "Option Adjusted Spread",
-    "Detail URL",  # keep so the app can render the "View" link
-]
-
-
-def find_latest_metrics_csv() -> Path:
-    candidates = sorted(
-        DATA_DIR.glob("ishares_fixed_income_metrics_*.csv"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
-    if not candidates:
-        raise FileNotFoundError("No metrics CSV found in ./data/")
-    return candidates[0]
-
-
-def export_json_from_csv(csv_path: Path) -> tuple[Path, Path, int]:
-    df = pd.read_csv(csv_path)
-    # keep only expected columns if present
-    cols = [c for c in KEEP_COLS if c in df.columns]
-    if cols:
-        df = df[cols]
-
-    funds_path = PUBLIC_DIR / "funds.json"
-    funds_path.write_text(df.to_json(orient="records", indent=2), encoding="utf-8")
-
-    meta = {
-        "updated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
-        "rows": int(df.shape[0]),
-        "source_file": csv_path.name,
-    }
-    meta_path = PUBLIC_DIR / "last_updated.json"
-    meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
-
-    print(f"Wrote {funds_path} ({df.shape[0]} rows)")
-    print(f"Wrote {meta_path} ({meta['updated_at']})")
-    return funds_path, meta_path, int(df.shape[0])
-
+    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    data = convert(csv_path)
+    with OUT_PATH.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+    print(f"Wrote {len(data)} records to {OUT_PATH}")
 
 if __name__ == "__main__":
-    latest = find_latest_metrics_csv()
-    print(f"Using CSV: {latest}")
-    export_json_from_csv(latest)
+    main()
