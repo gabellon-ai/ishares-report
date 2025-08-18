@@ -1,5 +1,6 @@
-// src/App.tsx
-// Loads data from /funds.json and renders the full dashboard UI.
+// App.tsx
+// Drop this in src/App.tsx (Vercel + Vite). It renders your full dashboard
+// and loads data from /funds.json that your GitHub Action writes to /public.
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -141,7 +142,7 @@ function NumberStepper({
     if (min !== undefined) n = Math.max(min, n);
     if (max !== undefined) n = Math.min(max, n);
     return Number.isFinite(n) ? Number(n.toFixed(2)) : n;
-    };
+  };
 
   const change = (delta: number) => {
     const base = value ?? (min ?? 0);
@@ -246,7 +247,7 @@ const App: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Works both locally and on Vercel
+        // Build a robust URL that works on Vercel and locally
         const jsonUrl =
           new URL("funds.json", import.meta.env.BASE_URL).toString() +
           `?ts=${Date.now()}`;
@@ -266,6 +267,7 @@ const App: React.FC = () => {
           "Effective Duration": parseNum(r["Effective Duration"]),
           "Weighted Avg Maturity": parseNum(r["Weighted Avg Maturity"]),
           "Option Adjusted Spread": parseNum(r["Option Adjusted Spread"]),
+          // Map Detail URL -> Detail so the "View" link renders
           Detail: r["Detail URL"] ?? r["Detail"],
         }));
 
@@ -329,7 +331,7 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [funds]);
 
-  const hasBounds = ytmVals.length > 0;
+  const hasBounds = ytmVals.length > 0; // to disable inputs during first load
 
   /* ----------------------- Filter + sort ----------------------- */
   const filteredFunds = useMemo(() => {
@@ -545,7 +547,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Header */}
-       <Card className="bg-gradient-to-r from-sky-500 via-cyan-600 to-teal-600 text-white rounded-2xl shadow-sm">
+        <Card className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white rounded-2xl shadow-sm">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <CardTitle className="text-3xl font-bold">
@@ -830,7 +832,7 @@ const App: React.FC = () => {
                           y: f["Average Yield to Maturity"]!,
                           z: f["Option Adjusted Spread"] ?? 0,
                           ticker: f.Ticker,
-                        }))} 
+                        }))}
                       fill={dotFill}
                       stroke={dotStroke}
                       opacity={0.9}
