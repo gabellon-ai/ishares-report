@@ -33,11 +33,11 @@ type Fund = {
   "Fund Name": string;
   "Closing Price"?: number;
   "Average Yield to Maturity"?: number; // %
-  "Weighted Avg Coupon"?: number;       // %
-  "Effective Duration"?: number;        // yrs
-  "Weighted Avg Maturity"?: number;     // yrs
-  "Option Adjusted Spread"?: number;    // bps
-  Detail?: string;                      // URL
+  "Weighted Avg Coupon"?: number; // %
+  "Effective Duration"?: number; // yrs
+  "Weighted Avg Maturity"?: number; // yrs
+  "Option Adjusted Spread"?: number; // bps
+  Detail?: string;
 };
 
 type SortKey =
@@ -69,14 +69,6 @@ const fmtYrs = (n?: number) => (n == null ? "—" : `${n.toFixed(2)} yrs`);
 const fmtBps = (n?: number) => (n == null ? "—" : `${n.toFixed(0)} bps`);
 const fmtUsd = (n?: number) => (n == null ? "—" : `$${n.toFixed(2)}`);
 
-const fmtChicago = (d: Date) =>
-  d.toLocaleString("en-US", {
-    timeZone: "America/Chicago",
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZoneName: "short",
-  });
-
 /* ======================== Theme utilities ===================== */
 
 function useIsDark() {
@@ -84,7 +76,7 @@ function useIsDark() {
   const [isDark, setIsDark] = React.useState(get);
 
   React.useEffect(() => {
-    // Respect saved theme once on mount
+    // respect saved theme once on mount
     const saved = localStorage.getItem("theme");
     if (saved === "dark") document.documentElement.classList.add("dark");
     if (saved === "light") document.documentElement.classList.remove("dark");
@@ -225,7 +217,6 @@ const App: React.FC = () => {
   const [funds, setFunds] = React.useState<Fund[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null); // NEW
 
   // Filters
   const [q, setQ] = React.useState("");
@@ -260,13 +251,6 @@ const App: React.FC = () => {
 
       const res = await fetch("/funds.json", { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      // NEW: pick up the server's Last-Modified header for display
-      const lm = res.headers.get("last-modified");
-      if (lm) {
-        const d = new Date(lm);
-        if (!Number.isNaN(d.valueOf())) setLastUpdated(d);
-      }
 
       const json = await res.json();
       const parsed: Fund[] = (json || []).map((r: any) => ({
@@ -318,7 +302,7 @@ const App: React.FC = () => {
 
   const ytmMinBound = ytmVals.length
     ? Math.floor(Math.min(...ytmVals) * 4) / 4
-    : 0; // round to .25
+    : 0;
   const ytmMaxBound = ytmVals.length
     ? Math.ceil(Math.max(...ytmVals) * 4) / 4
     : 10;
@@ -326,7 +310,7 @@ const App: React.FC = () => {
   const durMaxBound = durVals.length ? Math.ceil(Math.max(...durVals)) : 30;
   const oasMinBound = oasVals.length
     ? Math.floor(Math.min(...oasVals) / 5) * 5
-    : 0; // nearest 5
+    : 0;
   const oasMaxBound = oasVals.length
     ? Math.ceil(Math.max(...oasVals) / 5) * 5
     : 500;
@@ -549,13 +533,7 @@ const App: React.FC = () => {
                 data scraped from iShares.
               </p>
             </div>
-
-            <div className="flex items-center gap-3">
-              <div className="text-xs sm:text-sm text-white/90 dark:text-slate-300">
-                {lastUpdated ? `Last refresh: ${fmtChicago(lastUpdated)}` : ""}
-              </div>
-              <ThemeToggle />
-            </div>
+            <ThemeToggle />
           </CardHeader>
         </Card>
 
